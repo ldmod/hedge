@@ -1,0 +1,18 @@
+1、中低频：
+30min往上
+目前alpha有2bp左右，波动比较大
+2、高频
+1）对冲：alpha1.5  tvr120%   成本2bp
+2）alpha不够高，
+3) tickSize的大小是因为流动性差？还是项目方设置的? (背后原理可以去搞清楚)
+4) cross和uncross的概念理解
+5) tickSize不同，对应的交易策略应该不同，查阅相关资料
+ticksize大小对主动交易的影响，maker策略区别
+
+```
+spread=ask1-bid1
+spread = n*tickSize
+n=1, 表示流动性很好
+n>1, 表示流动性不好
+```
+6）aggressiveness，passiveness

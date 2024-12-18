@@ -1,0 +1,5 @@
+secdata_path : '/home/crypto/proddata/crypto/secdata/'
+http_proxy : 'http://127.0.0.1:33880'
+https_proxy : 'https://127.0.0.1:33880'
+# sids_path : '/home/crypto/proddata/crypto/secdata/'
+

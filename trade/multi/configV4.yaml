@@ -1,0 +1,70 @@
+signal:
+  base_path: '/home/crypto/signal/'
+  pred_dir: 'predv215_5w'
+  money_scale : 1.0
+
+proxy: {http : 'http://127.0.0.1:33880', https : 'http://127.0.0.1:33880'}
+timeout : 2
+order_hours : [20, 21, 22, 23, 0, 1]
+gorder:
+    shift: 1.0
+    ada_shift_range : 0.0
+    max_shift : 10.0
+    tcr : 1.1
+    expand : [0.0]
+    price_normw : 0.5
+    money_normw : 0.8
+    rwp : 1.0
+    trw : 1.1
+    special_trw : {CRVUSDT : 10.0, ALTUSDT : 5.0, TNSRUSDT : 5.0, NOTUSDT : 5.0, BBUSDT : 5.0,  BOMEUSDT : 5, DYDXUSDT : 5.0, REEFUSDT : 5.0, SNXUSDT : 5.0, SOLUSDT : 5, APTUSDT : 5.0, FTMUSDT : 2.5, BLURUSDT : 5.0, BAKEUSDT : 5.0, TRXUSDT : 5.0, TUSDT: 5.0, BICOUSDT : 5.0}
+    predratio : 0.5
+    simcnt : 2700
+    maxr : 3.0
+    trade_succ_ratio : 0.98
+    money_limit_ratio : 0.2
+    cancel_delay : 10
+    sim_money : 10000
+    mr_scale : 0.0
+    path : "/home/crypto/sec_klines_env/cryptoqt/prm/model_states/infmodel/prmv3/res/res.h5"
+    save_order_info_path : "/home/crypto/sec_klines_env/cryptoqt/trade/multi/data/order_infoV4.h5"
+
+gorder2:
+    shift: 0.0
+    ada_shift_range : 0.0
+    max_shift : 5.0
+    tcr : 1.1
+    expand : [0.0]
+    price_normw : 0.5
+    money_normw : 0.8
+    rwp : 1.0
+    trw : 1.1
+    special_trw : {CRVUSDT : 10.0, ALTUSDT : 5.0, TNSRUSDT : 5.0, NOTUSDT : 5.0,  BBUSDT : 5.0,  BOMEUSDT : 5,  DYDXUSDT : 5.0, REEFUSDT : 5.0, SNXUSDT : 5.0, SOLUSDT : 5, APTUSDT : 5.0, FTMUSDT : 2.5, BLURUSDT : 5.0, BAKEUSDT : 5.0, TRXUSDT : 5.0, TUSDT: 5.0, BICOUSDT : 5.0}
+    predratio : 0.5
+    simcnt : 2700
+    maxr : 3.0
+    trade_succ_ratio : 0.95
+    money_limit_ratio : 0.1
+    cancel_delay : 10
+    sim_money : 10000
+    mr_scale : 0.0
+    path : "/home/crypto/sec_klines_env/cryptoqt/prm/model_states/infmodel/prmv3/res/res.h5"
+    save_order_info_path : "/home/crypto/sec_klines_env/cryptoqt/trade/multi/data/order_infoV4.h5"
+
+processes:
+  - id: 0
+    api_key: Qz4hFo4zVqhLyrNVgK3uLDv7jAITuPfIWgeeKBmWBeP2LsqSsWpvWXfrabIgLejd
+    api_secret: dLuzimovVrawSj5V66POept0xbOaImUSyXKTSdIi6V1qXdo9xFdI6sHKT7TiiGw9
+  - id: 1
+    api_key: 4HoS5mXOYzFbCPJMt9tXjJHGFs1lVAPTsRQpbwjLB6U0IAyNA7MTgGFQdHBXFxF7
+    api_secret: jP9i3QJBiwBMpkgCNvA5an1KCkCgVHJ89uZy2vvqSOVH97ntImEoeb1QS99bkkWg
+  - id: 2
+    api_key: lE3mYsAWXqMVCJSqI0rOOreAzQGjJD6ye5F5lQWXrie7ViNInnX1J1xwiAA49nnp
+    api_secret: bExfEg6voUBoJ3FprIWlCfw8o46A87pa4o5CbgxWTU6VrtlqWOSGnM5zvJNoadhn
+  - id: 3
+    api_key: GQqlkVKhbxeNNxN5IG3QR2peCQyXRkzDmNbPmkPk4f6bUvjlbB5BgkQXGuqvCqxP
+    api_secret: mWx1VF50Qyp32Knym72kpkzS14Q0zGp3DDaW0udOMGTAgF5fy8FozRI7z8Hp6WP8
+  - id: 4
+    api_key: y8p2rvHD7IMNtxyfb6uFMRquzUPnM5OpSGuO6Jz8fVw3dXHfWkILSkttfOkhtZAa
+    api_secret: K95NanturONdx3tQahRFcNggxg590Xe7vgAffHaSsllfOfvHeqmUnPukB3Mk9k5T
+
+

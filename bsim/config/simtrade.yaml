@@ -1,0 +1,32 @@
+
+# starttm : 20240903040000
+# endtm : 20240903170000
+starttm : 20240904080000
+endtm : 20240904130000
+
+trade_succ_ratio : 0.95
+money_limit_ratio : 0.1
+
+gorder:
+    shift: 0.0
+    ada_shift_range : 2
+    max_shift : 1.0
+    tcr : 1.1
+    expand : [1.0]
+    # expand : [1.0, 5.0, -1.0]
+    price_normw : 0.9
+    money_normw : 0.1
+    rwp : 1.0
+    trw : 1.1
+    special_trw : {CRVUSDT : 3.0, SNXUSDT : 2.5, SOLUSDT : 2.5, APTUSDT : 2.5, FTMUSDT : 2.5, BLURUSDT : 2.5, BAKEUSDT : 2.5}
+    predratio : 0.5
+    simcnt : 2700
+    maxr : 3.0
+    trade_succ_ratio : 0.95
+    money_limit_ratio : 0.1
+    cancel_delay : 10
+    sim_money : 15000
+    mr_scale : 0.0
+    save_order_info_path : "/home/crypto/sec_klines_env/cryptoqt/bsim/data/order_info.h5"
+
+    path : "/home/crypto/sec_klines_env/cryptoqt/prm/model_states/infmodel/prmv3/res/res.h5"

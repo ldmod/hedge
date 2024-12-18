@@ -1,0 +1,146 @@
+name: "prm"
+modelpath : "../model_states/infmodel/"
+modelname : "prmv3"
+logpath : "./logs"
+logname : "prmv3.log"
+# onlyread : True
+# tmdelta : 15
+# reduce : 15
+# insperday : 5760
+tmdelta : 5
+reduce : 5
+ltdelta : 30
+dropins : True
+insperday : 17280
+# insmaxlen : 2048
+insmaxlen : 10240
+
+pavgcnt : 120
+tvrdeltas : 1
+traindelay : 2
+realtime : 0
+savepred : True
+outvalue : ["svwap", "slow", "bvwap", "bhigh", "sl", "bl"]
+lossratio : [1.0, 1.0, 1.0, 1.0, 0.0, 0.0]
+#lossratio : [1.0, 1.0, 1.0, 1.0, 3.0, 3.0]
+
+#, "savg", "bavg"
+starttm : 2024010201080000
+targets1idx : 210
+savedelta : 118400
+# traindays : []
+traindays : [1535, 511]
+sampleinsnum : 0
+scnt : 1
+dumpres : False
+dumphiddensize : 0
+getalpha : False
+alphaname : "h4info_return"
+spotfea : True
+dayhiddensize : 16
+daycorrsize : 16
+daym : False
+h1hiddensize : 16
+h1corrsize : 16
+h1m : False
+s15hiddensize : 128
+s15corrsize : 128
+s15m : False
+s5m : False
+s5seqlen : 256
+s1m : True
+s1seqlen : 256
+seqlayer3 : 0
+orim : True 
+tvrratio : 5.0
+threemodel : False
+hidpool : True
+timeembedsize : 2
+posembed : 1
+posembedsize : 8
+sidembedsize : 8
+delmergesid : False
+deltrainsid : True
+useseqsidembed : False
+
+lswweight : 1.0
+lswbias : 1.0
+usemoneyfea : 0
+
+feaqlist :
+    seqm_768_ldTrue_sn5 : {type: seqm, seed : 49575, writeflag: False, readflag: False}
+
+# seed: 49576
+seed: 49575
+eps : 0.000001
+crosssize : 256
+sbeta : 15.0
+ctxratio : 0.0
+yratio : 100.0
+    
+feaclampv : 3.0  
+
+gvaropt : False
+
+dropout_rate : 0.15
+
+lsr : 1.0
+stdr : 0.0
+
+lswratio : 5
+shortwratio : 0
+
+minkernel : 4
+expandnum : 4
+expandsize : 4
+
+usesid : False
+
+printstd : False
+tiddurcnt : 1
+seqlen : 768
+fc : 0.0
+
+dropout : 0.1
+embedlr : 1.0
+learning_rate : 0.00002
+weight_decay2 : 0.1
+cvlr : 1.0
+mergelr : 1.0
+beta1 : 0.95
+beta2 : 0.99
+randomins : True
+ynorm : True
+
+delaysec : 1
+encodersize : 512
+mtcssize : 128
+mtcssize2 : 16
+async : False
+
+
+hlnum : 1000
+offt : 2.0
+offscale : 1.0
+holdvalue : 5e8  
+replacecat : True
+useoptcss : True
+optbn : False
+
+yconvert : True
+mergeoutnorm : False
+mergeynorm : True
+mergeynormratio : 1.0
+syncbn : True
+
+balancedp : True
+gpu0bz : 10
+
+
+
+ytruncate : False
+yclamp : 4.0
+lossynorm : True
+
+
+

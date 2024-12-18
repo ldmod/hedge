@@ -1,0 +1,43 @@
+nohup: 忽略输入
+/home/prod/cryptoqt/data/feaextractor.py:522: RuntimeWarning: invalid value encountered in divide
+  min1info_vwap=(dr["min1info_money"][min1s:min1e]/dr["min1info_volume"][min1s:min1e])
+/home/prod/cryptoqt/data/feaextractor.py:526: RuntimeWarning: invalid value encountered in divide
+  data=dr["min1info_tbv"][min1s:min1e]/dr["min1info_volume"][min1s:min1e]
+/home/prod/cryptoqt/data/feaextractor.py:597: RuntimeWarning: invalid value encountered in divide
+  tvwap=money.sum(axis=0)/volume.sum(axis=0)
+/home/prod/cryptoqt/data/feaextractor.py:614: RuntimeWarning: invalid value encountered in divide
+  alpha=(retp*retp).sum(axis=0)/((vwapret*vwapret).sum(axis=0))
+/home/prod/cryptoqt/data/feaextractor.py:629: RuntimeWarning: invalid value encountered in divide
+  alpha=(retp*retp).sum(axis=0)/((vwapret*vwapret).sum(axis=0))
+/home/prod/cryptoqt/data/sfeaextractor.py:28: RuntimeWarning: invalid value encountered in divide
+  smin1info_vwap=(dr["smin1info_money"][min1s:min1e]/dr["smin1info_volume"][min1s:min1e])
+/home/prod/cryptoqt/data/sfeaextractor.py:32: RuntimeWarning: invalid value encountered in divide
+  data=dr["smin1info_tbv"][min1s:min1e]/dr["smin1info_volume"][min1s:min1e]
+/home/prod/cryptoqt/data/sfeaextractor.py:103: RuntimeWarning: invalid value encountered in divide
+  tvwap=money.sum(axis=0)/volume.sum(axis=0)
+/home/prod/cryptoqt/data/sfeaextractor.py:120: RuntimeWarning: invalid value encountered in divide
+  alpha=(retp*retp).sum(axis=0)/((vwapret*vwapret).sum(axis=0))
+/home/prod/cryptoqt/data/sfeaextractor.py:135: RuntimeWarning: invalid value encountered in divide
+  alpha=(retp*retp).sum(axis=0)/((vwapret*vwapret).sum(axis=0))
+/home/prod/cryptoqt/data/sfeaextractor.py:235: RuntimeWarning: invalid value encountered in divide
+  data[min5i-min5s]=dr["smin1info_tbv"][min1i-cnt:min1i].sum(axis=0)/dr["smin1info_volume"][min1i-cnt:min1i].sum(axis=0)
+/home/prod/cryptoqt/data/sfeaextractor.py:293: RuntimeWarning: Mean of empty slice
+  alpha=alpha-np.nanmean(alpha)
+/home/prod/miniconda3/lib/python3.11/site-packages/numpy/lib/nanfunctions.py:1872: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/home/prod/cryptoqt/data/sfeaextractor.py:309: RuntimeWarning: invalid value encountered in divide
+  tvwap=money.sum(axis=0)/volume.sum(axis=0)
+/home/prod/cryptoqt/data/sfeaextractor.py:311: RuntimeWarning: Mean of empty slice
+  alpha=alpha-np.nanmean(alpha)
+/home/prod/cryptoqt/data/sfeaextractor.py:327: RuntimeWarning: invalid value encountered in divide
+  alpha=(retp*retp).sum(axis=0)/((vwapret*vwapret).sum(axis=0))
+/home/prod/cryptoqt/data/sfeaextractor.py:328: RuntimeWarning: Mean of empty slice
+  alpha=alpha-np.nanmean(alpha)
+/home/prod/cryptoqt/data/sfeaextractor.py:343: RuntimeWarning: invalid value encountered in divide
+  alpha=(retp*retp).sum(axis=0)/((vwapret*vwapret).sum(axis=0))
+/home/prod/cryptoqt/data/sfeaextractor.py:344: RuntimeWarning: Mean of empty slice
+  alpha=alpha-np.nanmean(alpha)
+/home/prod/cryptoqt/data/sfeaextractor.py:359: RuntimeWarning: invalid value encountered in divide
+  alpha=alpha/np.nanstd(alpha)
+/home/prod/cryptoqt/data/sfeaextractor.py:358: RuntimeWarning: Mean of empty slice
+  alpha=alpha-np.nanmean(alpha)

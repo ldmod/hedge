@@ -1,0 +1,251 @@
+name: "smlp"
+modelpath : "../model_states/infmodel/"
+modelname : "smlpv25"
+logpath : "./logs"
+logname : "smlpv25.log"
+# onlyread : True
+tmdelta : 5
+reduce : 5
+longterm : 1
+longtermratio : 0.0
+insperday : 288
+daily_trade_money : 1000000
+tvrdeltas : 1
+traindelay : 2
+realtime : 0
+savepred : True
+outvalue : ["rank", "rankl", "ranklhalf", "vret"]
+startdti : 172800
+targetmin1idx : 210
+savedelta : 2880
+traindays : [672]
+sampleinsnum : 1
+dumpres : False
+dumphiddensize : 0
+getalpha : False
+alphaname : "h4info_return"
+spotfea : True
+dayhiddensize : 16
+daycorrsize : 16
+daym : False
+h1hiddensize : 16
+h1corrsize : 16
+h1m : False
+min15hiddensize : 128
+min15corrsize : 128
+min15m : False
+min5m : True
+min5seqlen : 256
+min1m : True
+min1seqlen : 256
+seqlayer3 : 0
+orim : True 
+tvrratio : 5.0
+
+hidpool : True
+timeembedsize : 2
+posembed : 1
+posembedsize : 8
+sidembedsize : 8
+delmergesid : True
+deltrainsid : True
+
+lswweight : 1.0
+lswbias : 1.0
+usemoneyfea : 0
+
+feaqlist :
+    seqm_768_ldTrue_sn5 : {type: seqm, seed : 49575, writeflag: False, readflag: False}
+
+# seed: 49576
+seed: 49575
+eps : 0.000001
+crosssize : 256
+sbeta : 15.0
+ctxratio : 0.0
+yratio : 100.0
+    
+feaclampv : 3.0  
+
+valitidx : 1
+validvalue : 0
+unidx : 3
+unvalue : 0
+
+gvaropt : False
+pc : 1.0
+
+tv : 100.0
+dropout_rate : 0.15
+
+atflag : 1
+
+tdecayratio : 0.5
+
+unflag : 1
+recentratio : -1
+pccdaynum : 32
+pccpreddaynum : 64
+lastdaynum : 1
+pccpreddeltanum : 8
+pccdeltanum : 8
+pcctargetnum : 8
+pccpredtargetnum : 1
+pccdropout : 0.7
+lsr : 1.0
+stdr : 0.0
+
+scorefun : 1
+lswratio : 5
+shortwratio : 0
+
+mct : 1.0
+ynum : 25
+minkernel : 4
+expandnum : 4
+expandsize : 4
+
+logflag : True
+inslen : 3000
+te : 35
+cacheflag : True
+cachemeanstd : True
+cachepccpred : True
+kfold : 6
+tkfold : 1
+maxbblen : 3
+traindaylen : 1500
+ftnum : 0
+
+pccte : 15
+normmomentum : 0.999
+
+deep : 3
+attaddflag : False
+att1 : False
+vcss : False
+userank : False
+optobj : "retfixpos"
+seqnum : 1
+retlossratio : 0.0
+normy : False
+retc : -10.3
+tvrc : -1000000.05
+predname : "raw"
+usemode : False
+moderatio : 0.75
+splitday : 125
+sfeanum : 1024
+cacheoriins : True
+
+insdrop : 0.1
+usepcc : False
+usebnfea : True
+usecospool : False
+usesid : False
+usepccpred : False
+noise : 0.1
+testfeaday : 100000
+lastratio : 0.0
+
+seqlen : 768
+testdaystart : 61440  # insperday*(1280)
+bufsize : 73728 # insperday*(1280+256))
+trainbackdelta : 200
+fc : 0.0
+
+insname : "rawdumpday"
+endday : "20221201"
+did : "1"
+startday : "20200101"
+use_amp : False
+
+dropout : 0.1
+targetidx : 1
+embedlr : 0.5
+learning_rate : 0.00005
+cvlr : 1.0
+mergelr : 1.0
+lambdal1 : 0.0
+lambdal2 : 0.2
+beta1 : 0.95
+beta2 : 0.99
+usebnx : False
+usecorr : False
+useseqcorr : False
+cvnum : 20
+randomins : True
+usesection : False
+zz500ret : False
+similityloss : False
+seqsimilityloss : False
+seqmse : False
+ynorm : True
+
+delaymin : 5
+unoinmodel : False
+seqmergex : False
+encodersize : 512
+mtcssize : 128
+mtcssize2 : 16
+step : 15
+mtpred : True
+async : False
+
+t15insperday : 16
+min2t15 : 3
+min2t1 : 0.2
+inscuda : False
+
+hlnum : 1000
+offt : 2.0
+offscale : 1.0
+holdvalue : 5e8  
+trans1data : True
+trans1m : False
+trans1seqlen : 1024
+trans1corrsize : 16
+usecurtvridx : False
+replacecat : True
+useoptcss : True
+optbn : False
+
+seqmfc : 0.0
+mergefc : 0.0
+outnorm : True
+yconvert : True
+mergeoutnorm : False
+mergeynorm : True
+mergeynormratio : 1.0
+syncbn : True
+scalepred : 0.5
+
+lswnorm : False
+printstd : False
+usetickdata : False
+balancedp : True
+gpu0bz : 10
+usehardw : True
+min1float16 : True
+wcdetach : False
+deldaymin : False
+optfcssmem : True
+optfcssmemtrans1 : True
+reportdatahiddensize : 32
+reportdatacorrsize : 32
+reportdata : False
+reportdatam : False
+addcosq : True
+d1mode : False
+usesectioncs : False
+mergemodelname : base
+
+ytruncate : False
+yclamp : 4.0
+seqlongloss : True
+next5minhighlimit : True
+use1minlimit : False
+lossynorm : True
+
+
+

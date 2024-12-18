@@ -1,0 +1,26 @@
+signal:
+  base_path: '/home/ubuntu/signal/'
+  pred_dir: 'predv215_3w'
+
+processes:
+  - id: 0
+    api_key: PpyT1CX1jt0CnPawxwAL9RcItlHv3nbVb8Vi121sQt4mmNGppvW4HthNPtBcPWuB
+    api_secret: CUQSHQK2DDG4Q3qEY4bpmUG7MJam8fo96lWtmCdl5Z6MpvehRv8uBXLFk1p0K8yV
+  - id: 1
+    api_key: 9yA0GirdNaLx4IgZxXCK2tXEwExxwqOFFgm4WeJZMGcwrRQgspFc0fHakbg5kewz
+    api_secret: XPYyk15VhqSJDn75wb6eyIVAZnUd98OaL1YFrhBVJhjI90FeUhLUf96JF8K51Q7A
+  - id: 2
+    api_key: DVwEHFK0qJ1d0vhatjiSRpMXzyKb1qZAnFhqj6Ia6clCoWsJBGJWVjAOwIvS1tqo
+    api_secret: w8XtfoeE2NFcs0f1mRFVPGwVB9LuugDWenE1dABDglPbyLjv4MqYD4AxpO4UfVrT
+  - id: 3
+    api_key: KmMi8TFE8OQ7TDW6kgYeVx5rbr6Y4kDJEfonBgfSNZjq7VD132WQHEoG51v2jVjZ
+    api_secret: TFN9JCHZ8iDc81zLhsJH9vg58gPAHNHoSlnQyeZD2dzi9gmaLwk87NSv47LllzX5
+  - id: 4
+    api_key: JNgWt6FN3wcjvAbyS8sjy3zdfQJiHQTWgc4xCHXN5lD6HEcWJzcmvNP9cl7bOkEo
+    api_secret: UYcAwLwd4v5z622zdLtxkPn79S1Ji3s832ONFcYmZUaGOHNT62USV6bPvgC0RZsh
+
+bid_multiplier: 0.9998
+ask_multiplier: 1.0002
+sch: 3
+scnt: 20
+spliter: 5

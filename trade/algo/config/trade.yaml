@@ -1,0 +1,103 @@
+signal:
+  base_path: '/home/crypto/signal/'
+  pred_dir: 'predv25_1w'
+  money_scale : 1.0
+
+proxy: {http : 'http://127.0.0.1:33881', https : 'http://127.0.0.1:33881'}
+timeout : 2
+order_hours : [5]
+gorder:
+    shift: 0.0
+    ada_shift_range : 0.0
+    max_shift : 5.0
+    tcr : 1.0
+    expand : [0.0]
+    price_normw : 0.9
+    money_normw : 1.0
+    rwp : 1.0
+    trw : 0.5
+    predratio : 0.5
+    simcnt : 2700
+    maxr : 2.5
+    minr : 1.0
+    trade_succ_ratio : 1.0    
+    money_limit_ratio : 10.0
+    cancel_delay : 60
+    sim_money : 1000
+    mr_scale : 0.0
+    # bp_map : [0, 1, 2, 3, 4, 5, 7, 10, 15, 20, 30, 40]
+    bp_map : [1, 3, 4, 5, 7, 10, 15, 20, 30, 40]
+    # bp_map : [5]
+    ts : 0.8
+    sbp_trhes : 0.25
+    mbr_thres : 0.45
+    mbrw : 3.0
+    bu_ratio : 3.0
+    bu_w : 0.08
+    tr_exp : 0.2
+    simlen : 45
+    simdc : 3
+
+    save_order_info_path : "/home/crypto/sec_klines_env/cryptoqt/trade/algo/data/order_info"
+    path : "/home/crypto/sec_klines_env/cryptoqt/prm/model_states/infmodel/prmvtest/res/res.h5"
+
+gorder2:
+    shift: 0.0
+    ada_shift_range : 0.0
+    max_shift : 2.0
+    tcr : 1.0
+    expand : [0.0]
+    price_normw : 0.9
+    money_normw : 1.0
+    avgscale : 1.2
+    
+    rwp : 0.5
+    trw : 1.2
+    predratio : 0.5
+    simcnt : 1500
+    maxr : 5.0
+    minr : 0.1
+    trade_succ_ratio : 1.0    
+    money_limit_ratio : 10.0
+    cancel_delay : 60
+    sim_money : 1000
+    mr_scale : 0.0
+    # bp_map : [0, 1, 2, 3, 4, 5, 7, 10, 15, 20, 30, 40]
+    # bp_map : [0, 1, 3,  5, 7, 10]
+    bp_map : [3]
+    ts : 0.8
+    sbp_trhes : 0.25
+    mbr_thres : 0.60
+    mbrw : 2.0
+    bu_ratio : 3.0
+    bu_w : 0.08
+    tr_exp : 0.2
+    simlen : 120
+    simdc : 5
+    ucw : 1.5
+    sucw : 0.5
+    fth : 1.1
+    sfth : 1.2
+    exceed_ratio : 1.0
+    cnt_cravg_shift : 0.2
+    bpw : 0.5
+
+    save_order_info_path : "/home/crypto/sec_klines_env/cryptoqt/trade/algo/data/order_info"
+    path : "/home/crypto/sec_klines_env/cryptoqt/prm/model_states/infmodel/prmvtest/res/res.h5"
+
+processes:
+  - id: 0
+    api_key: Qz4hFo4zVqhLyrNVgK3uLDv7jAITuPfIWgeeKBmWBeP2LsqSsWpvWXfrabIgLejd
+    api_secret: dLuzimovVrawSj5V66POept0xbOaImUSyXKTSdIi6V1qXdo9xFdI6sHKT7TiiGw9
+  - id: 1
+    api_key: 4HoS5mXOYzFbCPJMt9tXjJHGFs1lVAPTsRQpbwjLB6U0IAyNA7MTgGFQdHBXFxF7
+    api_secret: jP9i3QJBiwBMpkgCNvA5an1KCkCgVHJ89uZy2vvqSOVH97ntImEoeb1QS99bkkWg
+  - id: 2
+    api_key: lE3mYsAWXqMVCJSqI0rOOreAzQGjJD6ye5F5lQWXrie7ViNInnX1J1xwiAA49nnp
+    api_secret: bExfEg6voUBoJ3FprIWlCfw8o46A87pa4o5CbgxWTU6VrtlqWOSGnM5zvJNoadhn
+  - id: 3
+    api_key: GQqlkVKhbxeNNxN5IG3QR2peCQyXRkzDmNbPmkPk4f6bUvjlbB5BgkQXGuqvCqxP
+    api_secret: mWx1VF50Qyp32Knym72kpkzS14Q0zGp3DDaW0udOMGTAgF5fy8FozRI7z8Hp6WP8
+  - id: 4
+    api_key: y8p2rvHD7IMNtxyfb6uFMRquzUPnM5OpSGuO6Jz8fVw3dXHfWkILSkttfOkhtZAa
+    api_secret: K95NanturONdx3tQahRFcNggxg590Xe7vgAffHaSsllfOfvHeqmUnPukB3Mk9k5T

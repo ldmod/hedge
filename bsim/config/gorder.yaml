@@ -1,0 +1,6 @@
+gorder:
+    shift: 1.0
+    expand : [0.0]
+    price_normw : 0.0
+    predratio : 0.5
+    path : "/home/crypto/smlp_prm/cryptoqt/prm/model_states/infmodel/prmv3/res/res.h5"

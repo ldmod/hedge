@@ -1,0 +1,41 @@
+signal_path : "/home/crypto/signal/predv215_5w"
+
+um_client:
+    key : 'OB93VJoilGxvx2YozpTIqnt95AhutwkqYz1yyjPvmxmqY3UGip1HCojnCVBPRTOX'
+    secret : 'MKmsjNgtUC0lQ1AlkWYkqfI8kWThLTTAhm26FUXzSKMSWfH405Kz0Cs9gvulPOcj'
+    minmaxcnt : 150
+    timeout : 2
+    reuse_min : 10
+    proxies :
+    - {http_proxy : 'http://127.0.0.1:16890', https_proxy : 'http://127.0.0.1:16890'}
+    - {http_proxy : 'http://127.0.0.1:17890', https_proxy : 'http://127.0.0.1:17890'}
+    - {http_proxy : 'http://127.0.0.1:18890', https_proxy : 'http://127.0.0.1:18890'}
+    - {http_proxy : 'http://127.0.0.1:19890', https_proxy : 'http://127.0.0.1:19890'}
+    - {http_proxy : 'http://127.0.0.1:20890', https_proxy : 'http://127.0.0.1:20890'}
+    - {http_proxy : 'http://127.0.0.1:10890', https_proxy : 'http://127.0.0.1:10890'}
+    - {http_proxy : 'http://127.0.0.1:11890', https_proxy : 'http://127.0.0.1:11890'}
+    - {http_proxy : 'http://127.0.0.1:12890', https_proxy : 'http://127.0.0.1:12890'}
+    - {http_proxy : 'http://127.0.0.1:13890', https_proxy : 'http://127.0.0.1:13890'}
+    - {http_proxy : 'http://127.0.0.1:14890', https_proxy : 'http://127.0.0.1:14890'}
+    - {http_proxy : 'http://127.0.0.1:15890', https_proxy : 'http://127.0.0.1:15890'}
+    - {http_proxy : 'http://127.0.0.1:7890', https_proxy : 'http://127.0.0.1:7890'}
+    - {http_proxy : 'http://127.0.0.1:7990', https_proxy : 'http://127.0.0.1:7990'}
+    - {http_proxy : 'http://127.0.0.1:8090', https_proxy : 'http://127.0.0.1:8090'}
+    - {http_proxy : 'http://127.0.0.1:8190', https_proxy : 'http://127.0.0.1:8190'}
+    - {http_proxy : 'http://127.0.0.1:8290', https_proxy : 'http://127.0.0.1:8290'}
+    - {http_proxy : 'http://127.0.0.1:8390', https_proxy : 'http://127.0.0.1:8390'}
+    - {http_proxy : 'http://127.0.0.1:8490', https_proxy : 'http://127.0.0.1:8490'}
+    - {http_proxy : 'http://127.0.0.1:8590', https_proxy : 'http://127.0.0.1:8590'}
+    - {http_proxy : 'http://127.0.0.1:8690', https_proxy : 'http://127.0.0.1:8690'}
+    - {http_proxy : 'http://127.0.0.1:8790', https_proxy : 'http://127.0.0.1:8790'}
+    - {http_proxy : 'http://127.0.0.1:8890', https_proxy : 'http://127.0.0.1:8890'}
+    - {http_proxy : 'http://127.0.0.1:5890', https_proxy : 'http://127.0.0.1:5890'}
+    - {http_proxy : 'http://127.0.0.1:5900', https_proxy : 'http://127.0.0.1:5900'}
+    - {http_proxy : 'http://127.0.0.1:5910', https_proxy : 'http://127.0.0.1:5910'}
+    - {http_proxy : 'http://127.0.0.1:5920', https_proxy : 'http://127.0.0.1:5920'}
+    - {http_proxy : 'http://127.0.0.1:5930', https_proxy : 'http://127.0.0.1:5930'}
+    - {http_proxy : 'http://127.0.0.1:5940', https_proxy : 'http://127.0.0.1:5940'}
+    - {http_proxy : 'http://127.0.0.1:5950', https_proxy : 'http://127.0.0.1:5950'}
+    - {http_proxy : 'http://127.0.0.1:5960', https_proxy : 'http://127.0.0.1:5960'}
+    - {http_proxy : 'http://127.0.0.1:5970', https_proxy : 'http://127.0.0.1:5970'}
+    - {http_proxy : 'http://127.0.0.1:5980', https_proxy : 'http://127.0.0.1:5980'}
