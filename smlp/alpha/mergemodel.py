@@ -177,10 +177,10 @@ class MLPmodel(seqfea.FeatureModel):
         self.min15m=seqfea.Min15Model(crosssize=16, mseqlen=8)
         self.min15embedlen=128
         crosssize=gv["min15hiddensize"]
-        self.min1m=seqfea.Min1Model(crosssize=crosssize, mseqlen=8)
-        self.min1embedlen=int(crosssize*(8+gv["seqlayer3"]*4))
-        self.min5m=seqfea.Min5Model(crosssize=crosssize, mseqlen=8)
-        self.min5embedlen=int(crosssize*(8+gv["seqlayer3"]*4))
+        self.min1m=seqfea.Min1Model(crosssize=crosssize, mseqlen=gv["mseqlen"])
+        self.min1embedlen=int(crosssize*(gv["reserved"]*2+gv["seqlayer3"]*4))
+        self.min5m=seqfea.Min5Model(crosssize=crosssize, mseqlen=gv["mseqlen"])
+        self.min5embedlen=int(crosssize*(gv["reserved"]*2+gv["seqlayer3"]*4))
         self.sidembed=nn.Embedding(10000, gv["sidembedsize"])
         self.sidembed.weight.data.fill_(0.0)
         hiddenfeasize=0
@@ -276,7 +276,7 @@ class MLPmodel(seqfea.FeatureModel):
     def get_traindays(self, tidx):
         delay=gv["traindelay"]
         tdi=int(tidx/gv["tmdelta"])
-        days=list(range(max(int(tdi-365*1440/gv["tmdelta"]), 192), tdi-delay))
+        days=list(range(max(int(tdi-365*1440/gv["tmdelta"]), 960), tdi-delay))
         self.sampleinsnum=gv["sampleinsnum"]
         tdays = random.sample(days, self.sampleinsnum)
         tdays=sorted(tdays)
@@ -284,8 +284,8 @@ class MLPmodel(seqfea.FeatureModel):
         assigndays=tdi-np.array(assigndays)
         tdays+=assigndays.tolist()
         tdays=[item*gv["tmdelta"] for item in tdays]
-        
         return tdays
+    
     def ydays(self):
         days=gv["tmdelta"]
         return days 
@@ -300,7 +300,7 @@ class MLPmodel(seqfea.FeatureModel):
         return y
         
     def rankfunc(self, y):
-        y=(y*10).int()
+        y=(y*100).int()
         yv, yr=y.unique(sorted=True,return_inverse=True)
         yr=yr.float()
         yr=(yr-yr.mean())/yr.std().clamp(gv["eps"])
@@ -310,43 +310,38 @@ class MLPmodel(seqfea.FeatureModel):
         oy=y[valid]
         y=oy[:,0].flatten()
         x=x[valid]
+        
         ymean, ystd=y.mean(),y.std()
+        ynorm=(y-ymean)/y.std(dim=0).clamp(gv["eps"])
+        ynorm=ynorm.clamp(-10,10)
+        
+        
         yrank=self.rankfunc(y)
         #####
         longret=torch.from_numpy(d2i.getyl(gv["savedr"], tidx, int(gv["tmdelta"]*gv["longterm"]))).cuda()[valid]
         longret[~longret.isfinite()]=0.0
         longretnorm=(longret-longret.nanmean(dim=0))/longret.std(dim=0).clamp(gv["eps"])
+        ylongrank = self.rankfunc(longret)
         #####
-        volumeret=torch.from_numpy(d2i.getvolumerety(gv["savedr"], tidx, gv["tmdelta"])).cuda()[valid]
-        volumeret1=volumeret.clamp(0,5)
-        volumeret1[~volumeret1.isfinite()]=0
-        volumeretrank=self.rankfunc(volumeret)
-        volumeretrank[~volumeretrank.isfinite()]=0
-        #####
-        ynorm=(y-ymean)/y.std(dim=0).clamp(gv["eps"])
 
-        if  gv["ytruncate"]:
-            ystd=y.std(dim=0).clamp(gv["eps"])
-            y=y.clamp(-gv["yclamp"]*ystd, gv["yclamp"]*ystd)
 
         cosloss=-1.0*nn.CosineSimilarity(dim=0)(x, oy) 
         ics=tools.pearsonr(x, oy, batch_first=False)[0]
-        oyd=longretnorm.reshape(-1,1).repeat(1,len(gv["outvalue"]))
-        oyd[:,-1]=volumeret1.detach()
+        oyd=yrank.reshape(-1,1).repeat(1,len(gv["outvalue"]))
         icsd=tools.pearsonr(x, oyd, batch_first=False)[0]
         
-        mergeret=ynorm*(1-gv["longtermratio"])+longretnorm*gv["longtermratio"]
-        mseloss=nn.MSELoss(reduction='none')(x[:,0], mergeret*20).mean(dim=0)
+        targetY = ylongrank if gv["longtermTarget"] else yrank
+        
+        mseloss=nn.MSELoss(reduction='none')(x[:,0], targetY*10).mean(dim=0)
         wsharp=(ics[1]*-1.0).exp().detach()
-        mselosslong=(nn.MSELoss(reduction='none')(x[:,1], mergeret*20)).mean(dim=0)*wsharp
-        wsharp=(ics[2]*-2.0).exp().detach()
-        mselossranklong=(nn.MSELoss(reduction='none')(x[:,2], (mergeret)*20)).mean(dim=0)*wsharp
-        mselossrankt1=(nn.MSELoss(reduction='none')(x[:,3], volumeret1*20)).mean(dim=0)
+        mseloss1=(nn.MSELoss(reduction='none')(x[:,1], targetY*10)).mean(dim=0)*wsharp
+        wsharp=(ics[2]*-0.0).exp().detach()
+        mseloss2=(nn.MSELoss(reduction='none')(x[:,2], (ynorm)*10)).mean(dim=0)*wsharp
+        wsharp=(ics[3]*-1.0).exp().detach()
+        mseloss3=(nn.MSELoss(reduction='none')(x[:,3], ynorm*10)).mean(dim=0)*wsharp
 
-        vret1cos=nn.CosineSimilarity(dim=0)(x[:,3], volumeret1)
-        lossres=dict(loss=mseloss+mselosslong+mselossranklong+mselossrankt1, 
+        lossres=dict(loss=mseloss+mseloss1+mseloss2+mseloss3, 
                      ic=ics[0], valid=valid.sum(),
-                     vret1cos=vret1cos,
                      xstd=x.detach().std(),
                      ymean=ymean, ystd=ystd
                      )
@@ -382,10 +377,14 @@ class MLPmodel(seqfea.FeatureModel):
 
                 wtopavg=getwratiotopavg(x[vf], topk)
                 rettopavg=(wtopavg*y[vf]).sum(dim=0)
+                
+                wtopavgs=getwratiotopavg(-x[vf], topk)
+                rettopavgs=(wtopavgs*y[vf]).sum(dim=0)
             
                 infos["ret"+str(topk)]=rettop
                 infos["rets"+str(topk)]=retstop
                 infos["retavg"+str(topk)]=rettopavg
+                infos["retavgs"+str(topk)]=rettopavgs
                 infos["tvr"+str(topk)]=tvrpos
 
         return infos
@@ -407,6 +406,7 @@ class MLPmodel(seqfea.FeatureModel):
             if vf.sum()<2:
                 tools.flog("skip train valid zero:", gv["ts"][tday], gv["ts"][cur_tidx],
                            cur_tidx, vf.sum())
+                frowardpf.end()
                 continue
             y=self.getyy(tday)
             loss=self.calcloss(tday, output, y, vf)
@@ -421,7 +421,9 @@ class MLPmodel(seqfea.FeatureModel):
 
         tpf.end()
         timestr=tpf.to_string()
-        tools.flog("tm:", cur_tidx, timestr, traindays, "losssum:", losssum, "std:", output.std(dim=0), 
+        tools.flog("tm:", cur_tidx, timestr, traindays, 
+                   # "losssum:", losssum,
+                   "std:", output.std(dim=0), 
              "allocated:", torch.cuda.memory_allocated(), "maxallocated:", torch.cuda.max_memory_allocated(), 
              "reserverd:", torch.cuda.memory_reserved())
 

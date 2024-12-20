@@ -231,11 +231,6 @@ def getvalid(dr, min1i):
     moneyflag=dr["min1info_money"][(di-ipodays)*conts.daymincnt:di*conts.daymincnt].mean(axis=0)>(gv["daily_trade_money"]/1440)
     valid=valid&moneyflag
     
-    
-    # valid=valid&zhubanflag(dr)
-    # valid=valid&cyflag(dr)
-    # valid=valid&(kcflag(dr) | cyflag(dr))
-    
     return  valid
 
 def gety(dr, min1i, tmperiod):

@@ -23,7 +23,7 @@ import logging
 import mmap
 
 g_endmap={}
-g_path="/dev/shm/cryptocache"
+g_path="/dev/shm/hedge/cryptocache"
 g_endsize=int(4*365*1440)
 g_infos=["min1info", "smin1info", "min1info_extra", "smin1info_extra", "smin5info", "min5info"]
 def create_memmap(dr):

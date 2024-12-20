@@ -79,8 +79,7 @@ class Conon1445():
         #######modify config ############
 
         #######parse startdate##########
-        self.startdti=gv["startdti"]
-        self.lastdi=self.startdti*gv["tmdelta"]
+        self.lastdi=gv["startdti"]
         #######parse startdate##########
         lastedmodelpath=None
         if os.path.exists(gv["modelpath"]):
@@ -165,6 +164,7 @@ class Conon1445():
                 df["pred0"]=self.alpha[:,0]
                 df["pred1"]=self.alpha[:,1]
                 df["pred2"]=self.alpha[:,2]
+                df["pred3"]=self.alpha[:,3]
                 df.to_csv(gv["modelpath"]+"./res/"+str(gv["min1info_tm"][ti])+"_pred.csv")
             
                 if int(ti/gv["tmdelta"]) %100==0:

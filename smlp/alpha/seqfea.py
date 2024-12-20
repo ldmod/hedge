@@ -267,7 +267,7 @@ class Min1Model(nn.Module):
                                       corr=True,
                                       mt=0, deviceid=deviceid, section=section)
         self.do=nn.Dropout(gv["dropout"])
-        self.reserved=4
+        self.reserved=gv["reserved"]
         
 
     def forward(self, tidx, valid):
@@ -317,7 +317,7 @@ class Min5Model(nn.Module):
                                       corr=True,
                                       mt=0, deviceid=deviceid, section=section)
         self.do=nn.Dropout(gv["dropout"])
-        self.reserved=4
+        self.reserved=gv["reserved"]
         
 
     def forward(self, tidx, valid):

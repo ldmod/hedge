@@ -25,8 +25,8 @@ cfg = loadcfg("cfg.yaml")
 # os.environ["http_proxy"] = "socks5://127.0.0.1:7891"
 # os.environ["https_proxy"] = "socks5h://127.0.0.1:7891"
 myproxies = {
-        'http': 'http://127.0.0.1:33880',
-        'https': 'http://127.0.0.1:33880'
+        'http': 'http://127.0.0.1:33881',
+        'https': 'http://127.0.0.1:33881'
 }
 config_logging(logging, logging.DEBUG)
 

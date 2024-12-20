@@ -37,14 +37,16 @@ def readcsv_v2(dr, min1i, path="/home/crypto/smlpv2/cryptoqt/smlp/model_states/i
     alpha=df["pred0"].to_numpy()
     return alpha
 
-def readcsv_v2avg(dr, min1i, path="/home/crypto/smlpv2/cryptoqt/smlp/model_states/infmodel/tsmlpv215/res"):
+def readcsv_v2avg(dr, min1i, path="/home/crypto/smlpv2/cryptoqt/smlp/model_states/infmodel/tsmlpv215/res", fields = ["pred0", "pred1", "pred2"]):
     di=int(min1i/conts.daymincnt)
     h4i=int(min1i/conts.h4mincnt)
     h1i=int(min1i/conts.h1mincnt)
     min15i=int(min1i/conts.min15mincnt) 
     fname=path+"/"+str(dr["min1info_tm"][min1i])+"_pred.csv"
     df=pd.read_csv(fname)
-    alpha=df["pred0"].to_numpy()+df["pred1"].to_numpy()+df["pred2"].to_numpy()
+    alpha=np.zeros(df["pred0"].shape)
+    for field in fields:
+        alpha+=df[field].to_numpy()
     return alpha
 
 def readcsv_test(dr, min1i, path="/home/crypto/smlpv2/cryptoqt/smlp/model_states/infmodel/tsmlpv215/res"):

@@ -13,13 +13,13 @@ import random
 import threading
 
 class ClientWrapper(object):
-    def __init__(self, myproxies, timeout, Client):
+    def __init__(self, myproxies, timeout, Client, key, secret):
         self.cur_min_cnt=dict(cur_min=0, cnt=0)
         self.flag=True
         self.use=0
         self.timeout=timeout
         self.proxies=myproxies
-        self.client = Client(proxies=myproxies, timeout=self.timeout)
+        self.client = Client(proxies=myproxies, timeout=self.timeout, key=key, secret=secret)
       
     def set_flag(self, v):
         self.flag=v
@@ -34,18 +34,19 @@ class UmClient(object):
         self.reuse_min=cfg["reuse_min"]
         self.lock = threading.RLock()
         self.um_futures_clients=[]
+        key, secret = cfg["key"], cfg["secret"]
         for i in range(len(cfg["proxies"])):
             item=cfg["proxies"][i]
             myproxies = {
                     'http': item["http_proxy"],
                     'https': item["https_proxy"]
             }
-            um_futures_client = ClientWrapper(myproxies, self.timeout, Client)
+            um_futures_client = ClientWrapper(myproxies, self.timeout, Client,  key, secret)
             self.um_futures_clients.append(um_futures_client)
         return
     def recycle(self, client):
         self.lock.acquire()
-        client.set_use(client.use-1)
+        client.set_use(0)
         self.lock.release()
         return
     
@@ -59,16 +60,16 @@ class UmClient(object):
                 client=random_clis[i]
                 if client.cur_min_cnt["cur_min"] < cur_min-self.reuse_min: # recycle after 60 min
                     client.set_use(0)
-                if (not client.flag) or  client.use>5:
-                    print("in-use:", client.proxies, flush=True)
+                if (not client.flag) or  client.use:
+                    # print("in-use:", client.proxies, flush=True)
                     continue
                 if client.cur_min_cnt["cur_min"] < cur_min:
                     client.cur_min_cnt["cur_min"] =cur_min
                     client.cur_min_cnt["cnt"] = 0
                 if client.cur_min_cnt["cnt"] < self.minmaxcnt:
                     client.cur_min_cnt["cnt"]+=1
-                    client.set_use(client.use+1)
-                    print("get client:", client.proxies, flush=True)
+                    client.set_use(1)
+                    # print("get client:", client.proxies, flush=True)
                     self.lock.release()
                     return client
             print("no useful client", flush=True)

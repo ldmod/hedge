@@ -1,9 +1,21 @@
 
-path : '/data/nb/proddata/crypto/'
+signal_path : "/home/crypto/signal/predv23_1w"
+trade_info_path : "/home/crypto/sec_klines_env/cryptoqt/trade/min3/data/account"
+pos_info_path : "/home/crypto/sec_klines_env/cryptoqt/trade/min3/data/pos"
+acc_info_path : "/home/crypto/sec_klines_env/cryptoqt/trade/min3/data/accvalue"
+save_order_info_path : "/home/crypto/sec_klines_env/cryptoqt/trade/min3/data/order_info"
+min_delta : 3
+minute_list : [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
+lookback_mins : 1
+trade_min : 2
+log_path : "./logs/costinfo.log"
+
 um_client:
+    key : '0qqA3XZ73nSOMX0krkoq31MOxqkPX3LhdHMSGcNkPf0IM9Bh0R9gZlTkeUHio1WA'
+    secret : 'lRoFq5bDTq8yiNaGYPvejHCjYK6cXE6WaolHpReqpvDwFmF7joctQNON2DC0hxLj'
     minmaxcnt : 150
     timeout : 2
-    reuse_min : 2
+    reuse_min : 10
     proxies :
     - {http_proxy : 'http://127.0.0.1:16890', https_proxy : 'http://127.0.0.1:16890'}
     - {http_proxy : 'http://127.0.0.1:17890', https_proxy : 'http://127.0.0.1:17890'}

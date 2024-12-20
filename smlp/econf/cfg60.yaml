@@ -1,21 +1,24 @@
 name: "smlp"
 modelpath : "../model_states/infmodel/"
-# modelname : "tsmlpv260"
+modelname : "tsmlpv260"
 logpath : "./logs"
-# logname : "smlpv260.log"
+logname : "smlpv260.log"
 # onlyread : True
 tmdelta : 60
 reduce : 60
+daily_trade_money : 10000000
+longterm : 1
+longtermTarget : False
 insperday : 24
 tvrdeltas : 1
 traindelay : 2
 realtime : 0
-savepred : False
-outvalue : ["rank", "rankl", "ranklhalf", "vret"]
-startdti : 14400
+savepred : True
+outvalue : ["rank", "rank1", "rank2", "rank3"]
+startdti : 288000
 targetmin1idx : 210
-savedelta : 72000
-traindays : [336]
+savedelta : 28800
+traindays : []
 sampleinsnum : 1
 dumpres : False
 dumphiddensize : 0
@@ -32,9 +35,14 @@ min15hiddensize : 128
 min15corrsize : 128
 min15m : False
 min5m : True
-min5seqlen : 256
 min1m : True
-min1seqlen : 256
+# min5seqlen : 256
+# min1seqlen : 256
+# mseqlen : 8
+min5seqlen : 1024
+min1seqlen : 1024
+mseqlen : 16
+reserved : 4
 seqlayer3 : 0
 orim : True 
 tvrratio : 5.0
@@ -179,7 +187,7 @@ seqsimilityloss : False
 seqmse : False
 ynorm : True
 
-delaymin : 5
+delaymin : 2
 unoinmodel : False
 seqmergex : False
 encodersize : 512

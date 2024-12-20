@@ -34,6 +34,10 @@ import cryptoqt.data.datammap as dmmap
 import threading
 import cryptoqt.data.um_client_klines as umc
 import yaml
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+pd.set_option("display.max_colwidth", 100)
+pd.set_option('display.width', 10000)
 
 def readuniverse(g_data):
     global g_spotsymbols
@@ -50,12 +54,10 @@ def readuniverse(g_data):
 
 def setuniverse():
     universepath=g_path+"universe/"
-    info = um_futures_clients.get_um_client().exchange_info()
-    tsymbols=[x['symbol'] for x in info['symbols'] if x['symbol'][-4:]=='USDT']
     
-    targetsymbols=pd.read_csv("./crypto_data.csv")
+    sids_less=pd.read_csv(f"{universepath}/sids_hedge.csv")
     
-    tsymbols=[x for x in tsymbols if x[-4:]=='USDT' and x.split('USDT')[0].lower() in targetsymbols.values]
+    tsymbols=[x for x in sids_less['symbol'] if x[-4:]=='USDT']
 
     np.save(universepath+"sids", np.array(tsymbols))
     
@@ -63,17 +65,26 @@ def setuniverse():
     for tm in  range(g_start_tm, g_start_tm+g_mspermin*60*24*3000, g_mspermin):
         tms.append(tools.tmu2i(tm))
     np.save(universepath+"min1info_tm", np.array(tms))
-    
-    g_spotsymbols=spot_clients.get_um_client().exchange_info()['symbols']
+
+    myproxies = {
+            'http': 'http://127.0.0.1:33881',
+            'https': 'http://127.0.0.1:33881'
+    }
+    spot_client = Client( proxies=myproxies, timeout=10)
+    g_spotsymbols=spot_client.exchange_info()['symbols']
     g_spotsymbols=[x['symbol'] for x in g_spotsymbols]
+    g_spotsymbols= [x for x in tsymbols if x in g_spotsymbols]
     np.save(universepath+"g_spotsymbols", np.array(g_spotsymbols))
     
 def getdlastidx():
     h5path=g_h5path
     path=h5path+"smin1info.h5"
-    f=h5py.File(path, "r")
-    tidx=f["tm"].shape[0]
-    f.close()
+    tidx = 0
+    if os.path.exists(path):
+        f=h5py.File(path, "r")
+        if "tm" in f.keys():
+            tidx=f["tm"].shape[0]
+        f.close()
     return  tidx
 
 def gettmidx(tm, frequency='1m'):  
@@ -206,10 +217,11 @@ def bs_dumpdayh5(ss, end_tm,  frequency, savename):
                 exit(0)
         # for sidx, sid in enumerate(ss):
         #     fetchfunc(sid)
-        if np.isfinite(dd[savename+"_close"][:,0]).sum()==dd[savename+"_close"].shape[0] and\
-            np.isfinite(dd[savename+"_close"][:,1]).sum()==dd[savename+"_close"].shape[0]:
+        if (np.isfinite(dd[savename+"_close"][:,0]).sum()==dd[savename+"_close"].shape[0] and
+            np.isfinite(dd[savename+"_close"][:,1]).sum()==dd[savename+"_close"].shape[0])  \
+                or (fixend_tm >= tools.tmi2u(20230324200000) and fixend_tm <= tools.tmi2u(20230325080000)):
             break
-        print("data error:", tools.tmu2i(start_tm), tools.tmu2i(end_tm))
+        print("data error:", savename, tools.tmu2i(start_tm), tools.tmu2i(end_tm))
         time.sleep(60)
     
     f=tools.writeh5(h5path+savename+".h5")
@@ -263,15 +275,11 @@ def readh5new(infoname=["dayinfo", "min1info"], mem=False):
             fs.append(f)
     return fs
 
-
-exchange = ccxt.binance({
-})
-
 g_spotsymbols=None
 
-g_start_tm=exchange.parse8601('2021-01-01T00:00:00Z')
+g_start_tm=tools.tmi2u(20220101080000)
 g_mspermin=60000
-g_path='/home/crypto/proddata/crypto/'
+g_path='/data/nb/proddata/crypto/'
 g_h5path=g_path+"/h5/"
 
 g_data={}
@@ -282,7 +290,6 @@ def updateforover():
     readuniverse(g_data)
     mapdd={}
     dmmap.load_memmap(mapdd)
-    # end_tm=exchange.milliseconds()
     msperday=1000*60*60*24
 
     while True:
@@ -296,8 +303,8 @@ def updateforover():
             end_tm=tmi-int(g_mspermin*0) #delay 3 min
             tmsecond=tools.tmu2i(tmi)
             #if not (int(tmsecond / 100)%100 in [0,15, 30, 45] \
-            if not (int(tmsecond / 100)%10 in [0, 5] \
-                    and tmsecond %100 > 3 \
+            if not (int(tmsecond / 100)%10 in [0, 15] \
+                    and tmsecond %100 > 1 \
                         and end_tm-start_tm > g_mspermin):
                 time.sleep(1)
                 continue
@@ -334,32 +341,14 @@ def reseth5(end_tm, infoname=["min1info", "smin1info"]):
 
     
 if __name__ == "__main__":
-    timeout=2
+    timeout=3
     cfgpath="./config/updatedata.yaml"
     with open(cfgpath) as f:
         g_cfg = yaml.load(f, Loader=yaml.FullLoader)
-    um_futures_clients=umc.UmClient(g_cfg["um_client"], UMFutures)
+    um_futures_clients=umc.UmClient(g_cfg["um_client"], UMFutures)  
     spot_clients=umc.UmClient(g_cfg["um_client"], Client)
     # g_clientnum=len(um_futures_clients.um_futures_clients)
     g_clientnum=15
-    # um_futures_clients=[]
-    # spot_clients=[]
-    # g_clientnum=5
-    # for i in range(g_clientnum):
-    #     port=16890+i*1000
-    #     myproxies = {
-    #             'http': 'http://127.0.0.1:'+str(port),
-    #             'https': 'http://127.0.0.1:'+str(port)
-    #     }
-    #     um_futures_client = UMFutures( proxies=myproxies, timeout=timeout)
-    #     um_futures_clients.append(um_futures_client)
-    #     port=16890+i*1000
-    #     myproxies = {
-    #             'http': 'http://127.0.0.1:'+str(port),
-    #             'https': 'http://127.0.0.1:'+str(port)
-    #     }
-    #     spot_client = Client(base_url="https://api.binance.com", proxies=myproxies, timeout=timeout)
-    #     spot_clients.append(spot_client)
     
     config_logging(logging, logging.WARNING)
     # setuniverse()

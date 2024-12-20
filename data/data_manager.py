@@ -98,8 +98,8 @@ def init():
     load_ban_symbols(dr, g_cfg)
     lasteddownload=dmap.read_memmap(dr)
     
-    secdata=sk.SecondData(g_cfg["sec_data_path"], ud.g_data["sids"])
-    secdr=secdata.secdr
+    # secdata=sk.SecondData(g_cfg["sec_data_path"], ud.g_data["sids"])
+    # secdr=secdata.secdr
     ####### read base data ###############
     
 if __name__ == "__main__":

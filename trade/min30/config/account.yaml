@@ -1,9 +1,18 @@
 
-path : '/data/nb/proddata/crypto/'
+myproxies: {'http': 'http://127.0.0.1:33881', 'https': 'http://127.0.0.1:33881'}
+
+save_path : "./data/account"
+pos_path : "./data/pos"
+accvalue_path : "./data/accvalue"
+key : '0qqA3XZ73nSOMX0krkoq31MOxqkPX3LhdHMSGcNkPf0IM9Bh0R9gZlTkeUHio1WA'
+secret : 'lRoFq5bDTq8yiNaGYPvejHCjYK6cXE6WaolHpReqpvDwFmF7joctQNON2DC0hxLj'
+
 um_client:
+    key : '0qqA3XZ73nSOMX0krkoq31MOxqkPX3LhdHMSGcNkPf0IM9Bh0R9gZlTkeUHio1WA'
+    secret : 'lRoFq5bDTq8yiNaGYPvejHCjYK6cXE6WaolHpReqpvDwFmF7joctQNON2DC0hxLj'
     minmaxcnt : 150
     timeout : 2
-    reuse_min : 2
+    reuse_min : 10
     proxies :
     - {http_proxy : 'http://127.0.0.1:16890', https_proxy : 'http://127.0.0.1:16890'}
     - {http_proxy : 'http://127.0.0.1:17890', https_proxy : 'http://127.0.0.1:17890'}

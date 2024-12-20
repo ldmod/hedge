@@ -1,9 +1,9 @@
 
-base_path : "/home/crypto/proddata/crypto/"
-universe_path : "/home/crypto/proddata/crypto/universe/"
-ban_symbols_et : "/home/crypto/proddata/crypto/universe/ban_symbols_et.txt"
-ban_symbols_at : "/home/crypto/proddata/crypto/universe/ban_symbols_at.txt"
-sec_data_path : '/home/crypto/proddata/crypto/secdata/'
+base_path : "/data/nb/proddata/crypto/"
+universe_path : "/data/nb/proddata/crypto/universe/"
+ban_symbols_et : "/data/nb/proddata/crypto/universe/ban_symbols_et.txt"
+ban_symbols_at : "/data/nb/proddata/crypto/universe/ban_symbols_at.txt"
+# sec_data_path : '/data/nb/proddata/crypto/secdata/'
 
 ban_hours : [3, 4, 5, 6, 7, 8, 9, 10]
 ban_hours_less : [4, 5, 6, 7, 8, 9]
