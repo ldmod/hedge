@@ -95,7 +95,8 @@ if __name__ == "__main__":
                     df.set_index("sid")
                     df.set_index("sid").to_csv(args.dst+"/"+str(tm)+"_book.csv")
                     print("save succ", args.dst+"/"+str(tm)+"_book.csv", flush=True)
-                    retryscp(args.dst+"/"+str(tm)+"_book.csv", "/home/ubuntu/signal/predv230_1w/")
+                    if tm > 20241218000000:
+                        retryscp(args.dst+"/"+str(tm)+"_book.csv", "/home/ubuntu/signal/predv230_1w/")
 
                 min1i+=delta
             except Exception as e:

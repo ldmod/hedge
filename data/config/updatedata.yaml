@@ -2,8 +2,8 @@
 path : '/data/nb/proddata/crypto/'
 um_client:
     minmaxcnt : 150
-    timeout : 2
-    reuse_min : 2
+    timeout : 1
+    reuse_min : 1
     maxRetryCnt : 1
     proxies :
     - {http_proxy : 'http://127.0.0.1:16890', https_proxy : 'http://127.0.0.1:16890'}

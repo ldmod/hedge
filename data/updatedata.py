@@ -302,8 +302,9 @@ def updateforover():
         else:
             end_tm=tmi-int(g_mspermin*0) #delay 3 min
             tmsecond=tools.tmu2i(tmi)
-            #if not (int(tmsecond / 100)%100 in [0,15, 30, 45] \
-            if not (int(tmsecond / 100)%10 in [0, 15] \
+            if not (int(tmsecond / 100)%10 == 5 \
+            # if not (int(tmsecond / 100)%100 in [0,15, 30, 45] \
+            # if not (int(tmsecond / 100)%100 in [0, 30] \
                     and tmsecond %100 > 1 \
                         and end_tm-start_tm > g_mspermin):
                 time.sleep(1)
@@ -348,7 +349,7 @@ if __name__ == "__main__":
     um_futures_clients=umc.UmClient(g_cfg["um_client"], UMFutures)  
     spot_clients=umc.UmClient(g_cfg["um_client"], Client)
     # g_clientnum=len(um_futures_clients.um_futures_clients)
-    g_clientnum=15
+    g_clientnum=20
     
     config_logging(logging, logging.WARNING)
     # setuniverse()
