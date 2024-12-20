@@ -119,6 +119,18 @@ def isfinite(a):
     else:
         return a[np.isfinite(a)]
 
+def tensornorm(x, eps=1e-8, dim=0):
+    mean=x.nanmean(dim=dim).unsqueeze(dim=dim)
+    std=(((x-mean)**2).nanmean(dim=dim)).unsqueeze(dim=dim)**0.5
+    x=(x-mean)/std.clamp(eps)
+    return x
+
+def npnorm(x, eps=1e-8):
+    mean=np.nanmean(x)
+    std=np.nanstd(x)
+    x=(x-mean)/max(std, eps)
+    return x
+
 def readh5(path, sleeptime=5):
     cnt=0
     while cnt<10000:

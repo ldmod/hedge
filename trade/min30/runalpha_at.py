@@ -72,11 +72,13 @@ def calcw(dr, min1i, alpha, cnt=10, money=10000, tratio=0.05, lastbookw=None, mo
 def calcwtopk(dr, min1i, alpha, cnt=10, money=10000, tratio=0.05, lastbookw=None,
               money_limit=10000000):
     alpha=alpha.copy()
-    alpha[dm.dr["ban_symbols_at_flag"]]=np.nan
-    money_flag=(dm.dr["min1info_money"][min1i-5:min1i].mean(axis=0)>money_limit/1440)
-    alpha[~money_flag]=np.nan
-    alpha=alpha-np.median(alpha[np.isfinite(alpha)])
+    # alpha[dm.dr["ban_symbols_at_flag"]]=np.nan
+    # money_flag=(dm.dr["min1info_money"][min1i-5:min1i].mean(axis=0)>money_limit/1440)
+    # alpha[~money_flag]=np.nan
+    # alpha=alpha-np.median(alpha[np.isfinite(alpha)])
     alpha[~np.isfinite(alpha)]=0
+    argsort=alpha.argsort()
+    alpha[argsort[cnt:-cnt]]=0
     
     long=alpha>0
     short=alpha<0
@@ -337,11 +339,11 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
     df["ic"]=np.array(ics)
     scale=money/10000.0
     df["ret"]=(np.array(lrets)+np.array(srets))/scale/2
-    df["mi"]=np.array(mis)/scale
+    df["mi"]=np.array(mis)/scale/2
     df["miic"]=np.array(miics)
-    df["lret"]=np.array(lrets)/scale
-    df["sret"]=np.array(srets)/scale
-    df["tvr"]=np.array(tvrs)/scale
+    df["lret"]=np.array(lrets)/scale/2
+    df["sret"]=np.array(srets)/scale/2
+    df["tvr"]=np.array(tvrs)/scale/2
     # df["sa_lret"]=np.array(sa_lrets)/scale
     # df["sa_sret"]=np.array(sa_srets)/scale
     # df["realmeanret"]=np.array(realmeanrets)
@@ -369,10 +371,10 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
  
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test for argparse', formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('--start_date', help='start_date', default=20240401000000, type=int)
-    # parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
-    # parser.add_argument('--start_date', help='start_date', default=20241003190000, type=int)
-    parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
+    # parser.add_argument('--start_date', help='start_date', default=20240101000000, type=int)
+    parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
+    parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)
+    # parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
     args = parser.parse_args()
     dm.init()
     dr=dm.dr
@@ -383,19 +385,17 @@ if __name__ == "__main__":
     path="/home/nb/v1/cryptoqt/smlp/model_states/infmodel/tsmlpv230_2/res"
 
     aa=run_alpha(int(conts.h1mincnt/2), partial(min15_alpha.readcsv_v2avg,
-            path=path),
+            path=path, fields=["pred2"]),
             path=path,
             tsf=None,endflag=True, 
             delaymin=1,
-            alphaavg=alphaavg,
+            alphaavg=alphaavg2,
             # calcw=calcw,
-            # calcw=calcwtopkliqnew, 
-            # calcw=partial(calcwtopkw, cnt=1000, topk_ratio=1.0, money_limit=10000000), 
-            calcw=partial(calcwtopkliqV3, ratio_limit=150, scale=3, money_limit=5000000, 
-                          top_limit=30, min_delta=1000), 
-            # calcw=partial(calcw_random, money_limit=200000),
+            # calcw=partial(calcwtopk, cnt=5), 
+            calcw=partial(calcwtopkliqV3, ratio_limit=50, scale=3, money_limit=1000000, 
+                          top_limit=20, min_delta=1000), 
             # ban_symbols=ban_symbols,
-            ban_hours=dr["ban_hours_less"],
+            # ban_hours=dr["ban_hours_less"],
               start=args.start_date, end=args.end_date, 
               money=10000, tratio=0.2, lb_ratio=0.0)
     # print("\nsummary:", args.start_date, "~", args.end_date, "sum ret:", aa["ret"].sum())
@@ -406,7 +406,9 @@ if __name__ == "__main__":
     print(stats)
     
     print("\n----------last 20  signal  performance ----------------")
-    print(aa[-20:].set_index("tm"))
+    print(aa[-10:].set_index("tm"))
+    print("sharp:", aa["ret"].mean()/aa["ret"].std())
+    
 
 
     # xx=0

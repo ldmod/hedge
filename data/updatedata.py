@@ -341,7 +341,7 @@ def reseth5(end_tm, infoname=["min1info", "smin1info"]):
 
     
 if __name__ == "__main__":
-    timeout=3
+    timeout=2
     cfgpath="./config/updatedata.yaml"
     with open(cfgpath) as f:
         g_cfg = yaml.load(f, Loader=yaml.FullLoader)

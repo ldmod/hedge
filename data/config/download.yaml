@@ -1,10 +1,19 @@
 
-path : '/data/nb/proddata/crypto/'
+save_path : '/data/nb/binancedata/savedata'
+secdata_path : '/data/nb/proddata/secdata/'
+# meta_path : '/data/nb/proddata/universe/meta.csv'
+meta_path : './config/meta.csv'
+sids_less_path : './config/sids_less.csv'
+sids_hedge_path : './config/sids_hedge.csv'
+# myproxies : {'http': 'http://127.0.0.1:33881','https': 'http://127.0.0.1:33881'}
+myproxies : {'http': 'http://127.0.0.1:5980','https': 'http://127.0.0.1:5980'}
+
+start_tm : 20230101080000
+
 um_client:
     minmaxcnt : 150
     timeout : 2
-    reuse_min : 2
-    maxRetryCnt : 1
+    reuse_min : 1
     proxies :
     - {http_proxy : 'http://127.0.0.1:16890', https_proxy : 'http://127.0.0.1:16890'}
     - {http_proxy : 'http://127.0.0.1:17890', https_proxy : 'http://127.0.0.1:17890'}

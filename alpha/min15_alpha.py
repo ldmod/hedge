@@ -46,7 +46,7 @@ def readcsv_v2avg(dr, min1i, path="/home/crypto/smlpv2/cryptoqt/smlp/model_state
     df=pd.read_csv(fname)
     alpha=np.zeros(df["pred0"].shape)
     for field in fields:
-        alpha+=df[field].to_numpy()
+        alpha+=tools.npnorm(df[field].to_numpy())
     return alpha
 
 def readcsv_test(dr, min1i, path="/home/crypto/smlpv2/cryptoqt/smlp/model_states/infmodel/tsmlpv215/res"):

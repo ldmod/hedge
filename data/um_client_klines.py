@@ -34,6 +34,7 @@ class UmClient(object):
         self.reuse_min=cfg["reuse_min"]
         self.lock = threading.RLock()
         self.um_futures_clients=[]
+        self.maxRetryCnt = cfg["maxRetryCnt"]
         for i in range(len(cfg["proxies"])):
             item=cfg["proxies"][i]
             myproxies = {
@@ -59,7 +60,7 @@ class UmClient(object):
                 client=random_clis[i]
                 if client.cur_min_cnt["cur_min"] < cur_min-self.reuse_min: # recycle after 60 min
                     client.set_use(0)
-                if (not client.flag) or  client.use>5:
+                if (not client.flag) or  client.use>=self.maxRetryCnt:
                     print("in-use:", client.proxies, flush=True)
                     continue
                 if client.cur_min_cnt["cur_min"] < cur_min:

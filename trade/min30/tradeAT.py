@@ -12,7 +12,7 @@ from binance.um_futures import UMFutures
 from datetime import datetime, timedelta
 from dingtalkchatbot.chatbot import DingtalkChatbot
 # import cryptoqt.bsim.gorders as gorders
-import cryptoqt.trade.min3.gorders_at as gorders
+import cryptoqt.trade.min30.gorders_at as gorders
 import cryptoqt.bsim.ticker as ticker
 import cryptoqt.data.updatedata as ud
 import cryptoqt.data.sec_klines.sec_klines as sk
@@ -299,7 +299,7 @@ def cancel_order_by_id_in_parallel(clients, order_id_set, logger_trade, logger_e
 
 # Post orders(buy/sell) parallel
 def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_precision_map, quantity_precision_map,
-                            next_tm, ticker_client):
+                            next_tm):
     def place_order(client, order, request_ask_bid=False):
         try:
             symbol, _, order_price, order_money, order_info = order
@@ -310,10 +310,8 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
 
             if order_money > 0:
                 if request_ask_bid:
-                    bid0 = ticker_client.get_bid(symbol)
-                    if bid0 is None:
-                        bid0, bid1, bid2, bid3, bid4 = query_bids(client, symbol, price_precision_map[symbol], logger_error)
-                        logger_trade.info("use rest api")
+                    bid0, bid1, bid2, bid3, bid4 = query_bids(client, symbol, price_precision_map[symbol], logger_error)
+                    logger_trade.info("use rest api")
                     logger_trade.info(f"use best buy price is: {symbol}, {order_price}, {bid0}")
                     order_price = min(order_price, bid0)
                     order_info["order_price"] = order_price
@@ -328,10 +326,8 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
 
             else:
                 if request_ask_bid:
-                    ask0 = ticker_client.get_ask(symbol)
-                    if ask0 is None:
-                        ask0, ask1, ask2, ask3, ask4 = query_asks(client, symbol, price_precision_map[symbol], logger_error)
-                        logger_trade.info("use rest api")
+                    ask0, ask1, ask2, ask3, ask4 = query_asks(client, symbol, price_precision_map[symbol], logger_error)
+                    logger_trade.info("use rest api")
                     logger_trade.info(f"use best sell price is: {symbol}, {order_price}, {ask0}")
                     order_price = max(order_price, ask0)
                     order_info["order_price"] = order_price
@@ -350,7 +346,7 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
             return False
 
     order_status = {json.dumps(order[:4]): True for order in orders}
-    request_ask_bid = False
+    request_ask_bid = True
     with concurrent.futures.ThreadPoolExecutor(max_workers=len(clients)) as executor:
         while True:
             futures = []
@@ -519,14 +515,12 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
     ud.readuniverse(ud.g_data)
     secdata = sk.SecondData('/home/crypto/proddata/crypto/secdata/', ud.g_data["sids"])
     gorder1 = gorders.GenerateOrders(secdata, cfg["gorder"])
-    gorder1.update_tratio(get_current_tm())
     gorder2 = gorders.GenerateOrders(secdata, cfg["gorder2"])
-    gorder2.update_tratio(get_current_tm())
     # Init client
-    client = UMFutures(key=api_key, secret=api_secret, proxies=cfg["proxy"], timeout=cfg["timeout"])
-    clients = [UMFutures(key=api_key, secret=api_secret, proxies=cfg["proxy"], 
+    proxies = cfg["proxy"] if "proxy" in cfg else None
+    client = UMFutures(key=api_key, secret=api_secret, proxies=proxies, timeout=cfg["timeout"])
+    clients = [UMFutures(key=api_key, secret=api_secret, proxies=proxies, 
                          timeout=cfg["timeout"]) for _ in range(10)]
-    ticker_client = ticker.BookTickerClient(proxies=cfg["proxy"])
 
     logger_trade.info(f"value map is: {position_value_map}")
     logger_trade.info(f"amount map is: {position_amount_map}")
@@ -566,9 +560,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
                     continue
                 time.sleep(1)
                 signal_wait_count = signal_wait_count + 1
-            logger_trade.info(f"start ticker client")
-            ticker_client.start()
-            logger_trade.info(f"end ticker client")
+
             if int((int(signal_index) % 1000000) / 10000) in cfg["order_hours"]:
                 gorder = gorder1
                 logger_trade.info(f"------ gorder-1 : {signal_index} ------")
@@ -681,7 +673,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
 
                 # Step7: Post maker orders
                 post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_precision_map,
-                                        quantity_precision_map, next_tm, ticker_client)
+                                        quantity_precision_map, next_tm)
 
                 # Step9: Cancel pre round-10 orders
                 if i >= (gorder.cancel_delay - 1):
@@ -689,13 +681,6 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
                                                    logger_trade, logger_error)
 
             # Step10: Update algo order module tratio (after trade, once)
-            logger_trade.info(f"begin update_tratio {int(signal_index)}")
-            gorder.save_order_info(int(signal_index))
-            gorder1.update_tratio(get_current_tm())
-            gorder2.update_tratio(get_current_tm())
-            logger_trade.info(f"end update_tratio")
-            ticker_client.stop()
-            logger_trade.info(f"stop ticker client")
 
             # Step11: Update next signal file index (after trade, once)
             signal_time = datetime.strptime(signal_index, "%Y%m%d%H%M%S")
@@ -746,9 +731,6 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
 
 
 if __name__ == "__main__":
-
-    if "BNBUSDT" in available_token_map:
-        del available_token_map["BNBUSDT"]
     items = list(available_token_map.items())
     # random.shuffle(items)
     # Init config file
@@ -773,3 +755,6 @@ if __name__ == "__main__":
     position_value_map = copy.deepcopy(available_token_map)
     position_amount_map = copy.deepcopy(available_token_map)
     process_task(position_value_map, position_amount_map, api_key, api_secret, cfg, logger_trade, logger_error)
+    
+    
+    
