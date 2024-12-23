@@ -311,9 +311,9 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
             if order_money > 0:
                 if request_ask_bid:
                     bid0, bid1, bid2, bid3, bid4 = query_bids(client, symbol, price_precision_map[symbol], logger_error)
-                    logger_trade.info("use rest api")
-                    logger_trade.info(f"use best buy price is: {symbol}, {order_price}, {bid0}")
-                    order_price = min(order_price, bid0)
+                    logger_trade.info(f"rest api:use best buy price is: {symbol}, {order_price}, {bid0}")
+                    # order_price = min(order_price, bid0)
+                    order_price = bid0
                     order_info["order_price"] = order_price
                 trade_price = round(order_price, price_precision_map[symbol])
                 trade_amount = round(abs(order_money / order_price), quantity_precision_map[symbol])
@@ -327,9 +327,9 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
             else:
                 if request_ask_bid:
                     ask0, ask1, ask2, ask3, ask4 = query_asks(client, symbol, price_precision_map[symbol], logger_error)
-                    logger_trade.info("use rest api")
-                    logger_trade.info(f"use best sell price is: {symbol}, {order_price}, {ask0}")
-                    order_price = max(order_price, ask0)
+                    logger_trade.info(f"rest api:use best sell price is: {symbol}, {order_price}, {ask0}")
+                    # order_price = max(order_price, ask0)
+                    order_price = ask0
                     order_info["order_price"] = order_price
                 trade_price = round(order_price, price_precision_map[symbol])
                 trade_amount = round(abs(order_money / order_price), quantity_precision_map[symbol])
@@ -445,7 +445,7 @@ def update_positions(client, position_value_map, position_amount_map, logger_err
 # Change leverage(1)
 def change_leverage(client, symbol, logger_error):
     try:
-        client.change_leverage(symbol=symbol, leverage=20)
+        client.change_leverage(symbol=symbol, leverage=10)
     except Exception as e:
         logger_error.info("change_leverage: " + str(symbol) + str(e))
 
@@ -513,9 +513,8 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
 
     # Init gorder
     ud.readuniverse(ud.g_data)
-    secdata = sk.SecondData('/home/crypto/proddata/crypto/secdata/', ud.g_data["sids"])
-    gorder1 = gorders.GenerateOrders(secdata, cfg["gorder"])
-    gorder2 = gorders.GenerateOrders(secdata, cfg["gorder2"])
+    gorder1 = gorders.GenerateOrders(cfg["gorder"])
+    gorder2 = gorders.GenerateOrders(cfg["gorder2"])
     # Init client
     proxies = cfg["proxy"] if "proxy" in cfg else None
     client = UMFutures(key=api_key, secret=api_secret, proxies=proxies, timeout=cfg["timeout"])
@@ -527,22 +526,21 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
     logger_trade.info(f"------ process cfg: {cfg} ------")
 
     # Start index of signal file(based on current timestamp)
-    signal_index = time.strftime("%Y%m%d%H%M00", time.localtime(int(time.time() / (cfg["minutes"]*60)) * (cfg["minutes"]*60 )))
+    signal_index = time.strftime("%Y%m%d%H%M00", time.localtime(int(time.time() / (cfg["minutes"]*60) + 1) * (cfg["minutes"]*60 )))
 
     # Percision for price and quantity(3 means .00X)
 
     # Just one time
     # modify_position_side(client, logger_error)
-    #for key, value in position_value_map.items():
-    #    change_leverage(client, key, logger_error)
+    # for key, value in position_value_map.items():
+    #     change_leverage(client, key, logger_error)
 
-    signal_wait_max = 60 * cfg["trade_min"]  # 60s*10min
+    signal_wait_max = 60 * cfg["signal_wait_max"]  # 60s*10min
 
     while True:
         try:
             symbol_set = set()
             close_position_set = set()
-            real_delta_dict = {}
             clear_sets(cancel_order_id_sets)
             # Step1: Wait signal file and handle (before trade, once)
             file_path = f'{base_path}{pred_dir}/{signal_index}{signal_suffix}'
@@ -603,7 +601,6 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
                     alpha_value = alpha_map[key]
                     if alpha_value == 0:
                         close_position_set.add(key)
-                    real_delta_dict[key] = alpha_value
                     position_value = position_value_map[key]
                     real_delta = round(alpha_value - position_value, 2)
                     first_delta_map[key] = real_delta
@@ -617,7 +614,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
             logger_trade.info(f"Restart algo order module: {start_tm} - {end_tm}\n gorder_smpairs:{gorder.smpairs}")
             
             canceled_sids=[]
-            
+            delta_map = {}
             for i in range(retry_count):
                 # stop trading after end time
                 if get_current_tm() > end_tm:
@@ -692,9 +689,9 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
             real_value = 0.0
             update_positions(client, position_value_map, position_amount_map, logger_error)
             logger_trade.info(
-                f"\nend update_positions {position_value_map}.\n\n real_delta_dict:{real_delta_dict}\n\n gorder-keys:{gorder.smpairs.keys()}")
-            for key in real_delta_dict.keys():
-                value = real_delta_dict[key]
+                f"\nend update_positions {position_value_map}.\n\n alpha_map:{alpha_map}\n\n gorder-keys:{gorder.smpairs.keys()}")
+            for key in alpha_map.keys():
+                value = alpha_map[key]
                 f_value = abs(float(value))
                 f_position_value = abs(float(position_value_map[key]))
                 if (f_value > 5.0):
@@ -726,6 +723,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
 
         except Exception as e:
             logger_error.info(str(e))
+            # raise
             notify(str(e))
 
 

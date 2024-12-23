@@ -45,13 +45,22 @@ class UmClient(object):
         return
     def recycle(self, client):
         self.lock.acquire()
-        client.set_use(0)
+        client.set_use(client.use-1)
         self.lock.release()
         return
     
+    def test_client_ping(self):
+        for cli in self.um_futures_clients:
+            try :
+                cli.set_use(1)
+                cli.client.continuous_klines("BTCUSDT", "PERPETUAL", "1d")
+                cli.set_use(0)
+            except Exception as ex:
+                 pass
+                 
     def get_um_client(self):
-        self.lock.acquire()
         while True:
+            self.lock.acquire()
             random_clis=self.um_futures_clients.copy()
             random.shuffle(random_clis)
             cur_min=int(time.time()/60)
@@ -59,18 +68,19 @@ class UmClient(object):
                 client=random_clis[i]
                 if client.cur_min_cnt["cur_min"] < cur_min-self.reuse_min: # recycle after 60 min
                     client.set_use(0)
-                if (not client.flag) or  client.use:
-                    # print("in-use:", client.proxies, flush=True)
+                if (not client.flag) or  client.use :
+                    print("in-use:", client.proxies, client.use, flush=True)
                     continue
                 if client.cur_min_cnt["cur_min"] < cur_min:
                     client.cur_min_cnt["cur_min"] =cur_min
                     client.cur_min_cnt["cnt"] = 0
                 if client.cur_min_cnt["cnt"] < self.minmaxcnt:
                     client.cur_min_cnt["cnt"]+=1
-                    client.set_use(1)
-                    # print("get client:", client.proxies, flush=True)
+                    client.set_use(client.use+1)
+                    print("get client:", client.proxies, client.use, flush=True)
                     self.lock.release()
                     return client
+            self.lock.release()
             print("no useful client", flush=True)
             time.sleep(5)
             

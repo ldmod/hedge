@@ -34,16 +34,6 @@ class PredM:
     def __init__(self):
         self.obj=None
         # self.reskeys=["seqm1"] 
-    def gettrainins(self, traintidx):
-        if gv["randomins"]:
-            days=list(range(self.oriins.x.s+1024*48, traintidx))
-            traindays = random.sample(days,gv["traindeltanum"])
-        else:
-            traindays=[traintidx-(gv["reduce"]-gv["step"])*gv["trainbackdelta"]*i for i in range(gv["traindeltanum"])]
-            traindays=np.array(traindays)
-            traindays.sort()
-            traindays=traindays[traindays>self.oriins.x.s+1024*48]
-        return traindays
     
     def pred(self, xhis,yhis,tshis, predcfg={"checkflag":False}):
         return 
@@ -290,7 +280,8 @@ class MLPmodel(seqfea.FeatureModel):
         days=gv["tmdelta"]
         return days 
     def getyy(self, tidx):
-        y=d2i.gety(gv["savedr"], tidx, gv["tmdelta"])
+        tmperiod = round(gv["retterm"]*gv["tmdelta"]) if "retterm" in gv else gv["tmdelta"]
+        y=d2i.gety(gv["savedr"], tidx, tmperiod)
         # y=d2i.gety(gv["savedr"], tidx, 120)
         valid=(d2i.getvalid(gv["savedr"], tidx) & np.isfinite(y))
         y=y-y[valid].mean()
@@ -318,7 +309,8 @@ class MLPmodel(seqfea.FeatureModel):
         
         yrank=self.rankfunc(y)
         #####
-        longret=torch.from_numpy(d2i.getyl(gv["savedr"], tidx, int(gv["tmdelta"]*gv["longterm"]))).cuda()[valid]
+        tmperiod = round(gv["retterm"]*gv["tmdelta"]) if "retterm" in gv else gv["tmdelta"]
+        longret=torch.from_numpy(d2i.getyl(gv["savedr"], tidx, int(tmperiod*gv["longterm"]))).cuda()[valid]
         longret[~longret.isfinite()]=0.0
         longretnorm=(longret-longret.nanmean(dim=0))/longret.std(dim=0).clamp(gv["eps"])
         ylongrank = self.rankfunc(longret)

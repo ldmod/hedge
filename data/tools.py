@@ -187,5 +187,19 @@ def setup_seed(seed):
      random.seed(seed)
      torch.backends.cudnn.deterministic = True
 
+def s2type(ss):
+    dtype=None
+    if ss=='np.float32':
+        dtype=np.float32
+    elif ss=='np.int32':
+        dtype=np.int32
+    elif ss=='np.int64':
+        dtype=np.int64
+    elif ss=='np.float64':
+        dtype=np.float64
+    elif ss=='np.str':
+        dtype=np.str_
+    return dtype
+
 
 

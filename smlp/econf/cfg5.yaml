@@ -1,24 +1,24 @@
 name: "smlp"
 modelpath : "../model_states/infmodel/"
-modelname : "smlpv25"
+modelname : "tsmlpv21"
 logpath : "./logs"
-logname : "smlpv25.log"
+logname : "smlpv21.log"
 # onlyread : True
-tmdelta : 5
-reduce : 5
+tmdelta : 1
+reduce : 30
+daily_trade_money : 5000000
 longterm : 1
-longtermratio : 0.0
-insperday : 288
-daily_trade_money : 1000000
+longtermTarget : False
+insperday : 48
 tvrdeltas : 1
 traindelay : 2
 realtime : 0
 savepred : True
-outvalue : ["rank", "rankl", "ranklhalf", "vret"]
-startdti : 172800
+outvalue : ["rank", "rank1", "rank2", "rank3"]
+startdti : 288000
 targetmin1idx : 210
 savedelta : 2880
-traindays : [672]
+traindays : []
 sampleinsnum : 1
 dumpres : False
 dumphiddensize : 0
@@ -35,9 +35,14 @@ min15hiddensize : 128
 min15corrsize : 128
 min15m : False
 min5m : True
-min5seqlen : 256
 min1m : True
+min5seqlen : 256
 min1seqlen : 256
+mseqlen : 8
+# min5seqlen : 1024
+# min1seqlen : 1024
+# mseqlen : 16
+reserved : 4
 seqlayer3 : 0
 orim : True 
 tvrratio : 5.0
@@ -182,7 +187,7 @@ seqsimilityloss : False
 seqmse : False
 ynorm : True
 
-delaymin : 5
+delaymin : 2
 unoinmodel : False
 seqmergex : False
 encodersize : 512

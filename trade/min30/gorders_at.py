@@ -169,7 +169,7 @@ class GenerateOrders:
             cnt_ratio=(item["total_cnt"]-leftcnt)/item["total_cnt"]
             trade_direct=np.sign((item["target_money"]-item["begin_money"]))
             target=self.smpairs[symbol]
-            exceed_ratio=self.cfg["exceed_ratio"] if abs(target["target_money"]) > 1.0  else 1.0
+            exceed_ratio=1.0
 
             if ((abs(item["target_money"]-item["begin_money"])*exceed_ratio < abs(item["cur_money"]-item["begin_money"])) 
                 or (sid not in price_precision_map)):
@@ -238,8 +238,7 @@ class GenerateOrders:
                 self.status_dict["b_money"][sidx]=cur_money
                 values=dict(target_money=target_money, begin_money=cur_money, f_money=target_money-cur_money,
                             cur_money=cur_money, total_cnt=leftcnt, avg_money=(target_money-cur_money)/leftcnt,
-                            ls_avg = 0, accv=0, locnt=0, o_m=0, tr_avg=self.cfg["mbr_thres"],
-                            cr_avg=self.tcr+0.2, alpha=item[1][2])
+                            cr_avg=0.0, alpha=item[1][2])
                 self.smpairs[symbol]=values
         return
     
@@ -255,7 +254,7 @@ class GenerateOrders:
         cr_symbols=[]
         for sid,item in self.smpairs.items():
             target=item
-            exceed_ratio=self.cfg["exceed_ratio"] if abs(target["target_money"]) > 1.0  else 1.0
+            exceed_ratio=1.0
 
             if (abs(item["target_money"]-item["begin_money"])*exceed_ratio <= 
                 abs(item["cur_money"]-item["begin_money"])):

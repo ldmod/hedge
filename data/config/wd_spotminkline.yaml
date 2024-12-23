@@ -1,10 +1,31 @@
 
-path : '/data/nb/proddata/crypto/'
+proxy :  
+    - {'http': 'http://127.0.0.1:33881','https': 'http://127.0.0.1:33881'}
+    # - {'http': 'http://127.0.0.1:33881','https': 'http://127.0.0.1:33881'}
+# proxy :  {'http': 'http://127.0.0.1:16890','https': 'http://127.0.0.1:16890'}
+
+stream_name : '@kline_1m'
+save_path : '/data/nb/proddata/h5/testSpotkline_1m/'
+ktype : "spot"
+kline_fields : ['opentm', 'open', 'high', 'low', 'close','volume','closetm', 'money', 'tnum', 'tbv', 'tbm', 'ignore']  
+columns :
+    - ["opentm", "np.int64"]
+    - ["open", "np.float32"]
+    - ["high", "np.float32"]
+    - ["low", "np.float32"]
+    - ["close", "np.float32"]
+    - ["volume", "np.float32"]
+    - ["closetm", "np.int64"]
+    - ["money", "np.float32"]
+    - ["tnum", "np.float32"]
+    - ["tbv", "np.float32"]
+    - ["tbm", "np.float32"]
+    - ["ignore", "np.float32"]
+
 um_client:
-    minmaxcnt : 150
-    timeout : 0.5
-    reuse_min : 2
-    maxRetryCnt : 1
+    minmaxcnt : 10
+    timeout : 2
+    reuse_min : 3
     proxies :
     - {http_proxy : 'http://127.0.0.1:16890', https_proxy : 'http://127.0.0.1:16890'}
     - {http_proxy : 'http://127.0.0.1:17890', https_proxy : 'http://127.0.0.1:17890'}

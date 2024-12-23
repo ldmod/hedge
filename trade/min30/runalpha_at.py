@@ -209,7 +209,7 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
 
     dr=dm.dr
     dr["uid"]=dr["sids"]
-    years, months, lrets, srets = [], [], [], []
+    years, months, lrets, srets, mrets = [], [], [], [], []
     tms, days, tvrs=[], [], []
     ics, sa_lrets, sa_srets = [], [], []
     realmeanrets=[]
@@ -225,6 +225,8 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
     alphas=deque(maxlen=100)
     for min1i in range(start, end, delta):
         tm=dr["min1info_tm"][min1i]
+        if tm == 20241029000000:
+            a=0
         if int((tm % 1000000)/10000) in ban_hours:
             continue
         fname=path+"/"+str(tm)+"_pred.csv"
@@ -322,9 +324,12 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
         srets.append(sret)
         tvrs.append(tvr)
         mis.append(mi.sum())
-
-        sa_lrets.append(lret-realretmean*money)
-        sa_srets.append(sret+realretmean*money)
+        
+        mret=(lret+sret)/2-tvr/money
+        mrets.append(mret)
+        
+        sa_lrets.append(lret-realretmean*money-tvr/money/2)
+        sa_srets.append(sret+realretmean*money-tvr/money/2)
 
         if ~np.isfinite(sa_lrets[-1]):
             a=0
@@ -344,6 +349,7 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
     df["lret"]=np.array(lrets)/scale/2
     df["sret"]=np.array(srets)/scale/2
     df["tvr"]=np.array(tvrs)/scale/2
+    df["mret"] = np.array(mrets)
     # df["sa_lret"]=np.array(sa_lrets)/scale
     # df["sa_sret"]=np.array(sa_srets)/scale
     # df["realmeanret"]=np.array(realmeanrets)
@@ -355,11 +361,12 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
     stats["ic"]=df.groupby("day").mean()["ic"]
     
     xsdate = [datetime.datetime.strptime(str(d), '%Y%m%d').date() for d in days]
-    # plt.plot(xsdate, np.cumsum(sa_lrets),color='r')
-    # plt.plot(xsdate, np.cumsum(sa_srets),color='b')
-    # plt.tick_params(axis='both',which='both',labelsize=10)
-    # plt.gcf().autofmt_xdate()  # 自动旋转日期标记
-    # plt.show()
+    plt.plot(xsdate, np.cumsum(sa_lrets),color='r')
+    plt.plot(xsdate, np.cumsum(sa_srets),color='b')
+    plt.plot(xsdate, np.cumsum(mrets),color='y')
+    plt.tick_params(axis='both',which='both',labelsize=10)
+    plt.gcf().autofmt_xdate()  # 自动旋转日期标记
+    plt.show()
     # plt.plot(xsdate, ics)
     # plt.plot(xsdate, tools.moving_average(np.array(ics),10))
     # plt.tick_params(axis='both',which='both',labelsize=10)
@@ -373,8 +380,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test for argparse', formatter_class=argparse.RawTextHelpFormatter)
     # parser.add_argument('--start_date', help='start_date', default=20240101000000, type=int)
     parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
-    parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)
-    # parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
+    # parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)
+    parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
     args = parser.parse_args()
     dm.init()
     dr=dm.dr
@@ -405,9 +412,12 @@ if __name__ == "__main__":
     print("\n----------month  performance ----------------")
     print(stats)
     
+    stats=aa.groupby("day").mean()
+    tools.plotg(np.cumsum(stats["mret"].values))
+    
     print("\n----------last 20  signal  performance ----------------")
-    print(aa[-10:].set_index("tm"))
-    print("sharp:", aa["ret"].mean()/aa["ret"].std())
+    print(aa[-20:].set_index("tm"))
+    print(f"meanret:{aa['mret'].mean()} std:{aa['mret'].std()} sharp:", aa["mret"].mean()/aa["mret"].std())
     
 
 

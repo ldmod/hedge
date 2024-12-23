@@ -1,4 +1,21 @@
 
+c_path : '/data/nb/proddata/h5/testCkline_1m/'
+s_path : '/data/nb/proddata/h5/testSpotkline_1m/'
+kline_fields : ['opentm', 'open', 'high', 'low', 'close','volume','closetm', 'money', 'tnum', 'tbv', 'tbm', 'ignore']  
+columns :
+    - ["opentm", "np.int64"]
+    - ["open", "np.float32"]
+    - ["high", "np.float32"]
+    - ["low", "np.float32"]
+    - ["close", "np.float32"]
+    - ["volume", "np.float32"]
+    - ["closetm", "np.int64"]
+    - ["money", "np.float32"]
+    - ["tnum", "np.float32"]
+    - ["tbv", "np.float32"]
+    - ["tbm", "np.float32"]
+    - ["ignore", "np.float32"]
+    
 path : '/data/nb/proddata/crypto/'
 um_client:
     minmaxcnt : 150

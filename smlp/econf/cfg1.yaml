@@ -4,9 +4,10 @@ modelname : "tsmlpv21"
 logpath : "./logs"
 logname : "smlpv21.log"
 # onlyread : True
-tmdelta : 1
+tmdelta : 30
 reduce : 30
-daily_trade_money : 5000000
+daily_trade_money : 10
+retterm : 0.0333
 longterm : 1
 longtermTarget : False
 insperday : 48
@@ -187,7 +188,7 @@ seqsimilityloss : False
 seqmse : False
 ynorm : True
 
-delaymin : 2
+delaymin : 1
 unoinmodel : False
 seqmergex : False
 encodersize : 512

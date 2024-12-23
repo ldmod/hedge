@@ -14,7 +14,7 @@ from  cryptoqt.smlp.alpha.tools import flog as flog
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test for argparse', formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('--did', help='deviceid', default=0)
-    parser.add_argument('--cfgpath',  help='cfg path', default='./econf/cfg30_2.yaml')
+    parser.add_argument('--cfgpath',  help='cfg path', default='./econf/cfg1.yaml')
     args = parser.parse_args()
     os.environ['CUDA_VISIBLE_DEVICES'] = str(args.did)
     print(args)

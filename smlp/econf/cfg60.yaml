@@ -6,7 +6,7 @@ logname : "smlpv260.log"
 # onlyread : True
 tmdelta : 60
 reduce : 60
-daily_trade_money : 10000000
+daily_trade_money : 5000000
 longterm : 1
 longtermTarget : False
 insperday : 24
@@ -17,7 +17,7 @@ savepred : True
 outvalue : ["rank", "rank1", "rank2", "rank3"]
 startdti : 288000
 targetmin1idx : 210
-savedelta : 28800
+savedelta : 2880
 traindays : []
 sampleinsnum : 1
 dumpres : False
@@ -36,12 +36,12 @@ min15corrsize : 128
 min15m : False
 min5m : True
 min1m : True
-# min5seqlen : 256
-# min1seqlen : 256
-# mseqlen : 8
-min5seqlen : 1024
-min1seqlen : 1024
-mseqlen : 16
+min5seqlen : 256
+min1seqlen : 256
+mseqlen : 8
+# min5seqlen : 1024
+# min1seqlen : 1024
+# mseqlen : 16
 reserved : 4
 seqlayer3 : 0
 orim : True 

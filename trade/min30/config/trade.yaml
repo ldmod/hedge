@@ -1,22 +1,23 @@
 signal:
-  base_path: '/home/crypto/signal/'
-  pred_dir: 'predv23_1w'
-  money_scale : 1.0
+  base_path: '/home/nb/signal/'
+  pred_dir: 'predv230_1w'
+  money_scale : 0.1
 
-minutes : 3
-trade_min : 2
+minutes : 30
+trade_min : 5
+signal_wait_max : 30
 proxy: {http : 'http://127.0.0.1:33881', https : 'http://127.0.0.1:33881'}
 timeout : 2
 order_hours : [5]
 gorder:
-    splitcnt : 3
-    cancel_delay : 5
+    splitcnt : 4
+    cancel_delay : 1
 
 gorder2:
-    splitcnt : 3
-    cancel_delay : 5
+    splitcnt : 4
+    cancel_delay : 1
 
 processes:
   - id: 0
-    key : 'qxftbrQhhN5lXboD4bkwhZ3VMJvOIAeQewanOagpptqP5Rb6ZZ9TRKyHIKdGTIkM'
-    secret : '7P4DAvpjWeuQpKAfG8ZpXN4J8OkcNrk1Wx4mwJJyeeWaK5yJoxR2He01NPcYO3cJ'
+    api_key : 'qxftbrQhhN5lXboD4bkwhZ3VMJvOIAeQewanOagpptqP5Rb6ZZ9TRKyHIKdGTIkM'
+    api_secret : '7P4DAvpjWeuQpKAfG8ZpXN4J8OkcNrk1Wx4mwJJyeeWaK5yJoxR2He01NPcYO3cJ'
