@@ -152,30 +152,14 @@ def retry_fetch_ohlcv_h5fs(savename, max_retries, symbol, timeframe, startTime, 
         if lasted_items.iloc[-1]["opentm"] + 60*1000 >= endTime:
             break
         time.sleep(1)
+        print(f"{symbol}:wait {tools.tmu2i(lasted_items.iloc[-1]['opentm'] + 60*1000)}-{tools.tmu2i(endTime)}:",  flush=True)
     h5fs.refresh()
     #g_data["min1info_tm"][offset]
     target_items=h5fs.get_items(startMinIdx-offset, endMinIdx-offset)
     if target_items.shape[0] != (endMinIdx-startMinIdx):
         a=0
     assert target_items.shape[0] == (endMinIdx-startMinIdx), str(f"{symbol}:{tools.tmu2i(startTime)}-{tools.tmu2i(endTime)}")
-    ohlcv=[]
-    for idx in range(target_items.shape[0]):
-        data=[]
-        dd = target_items.iloc[idx]
-        data.append(dd["opentm"])
-        data.append(dd["open"])
-        data.append(dd["high"])
-        data.append(dd["low"])
-        data.append(dd["close"])
-        data.append(dd["volume"])
-        data.append(dd["closetm"])
-        data.append(dd["money"])
-        data.append(dd["tnum"])
-        data.append(dd["tbv"])
-        data.append(dd["tbm"])
-        data.append(dd["ignore"])
-        ohlcv.append(data)
-    return ohlcv
+    return target_items
 
 g_clientmap_lock = threading.Lock()
 g_clientmap={}
@@ -186,30 +170,14 @@ def updatevalue(frequency, start_tm, end_tm, h5f, savename, off, sid):
     with g_clientmap_lock:
         if tidx not in g_clientmap:
             g_clientmap[tidx]=len(g_clientmap)
-    
-    # cidx=g_clientmap[tidx]
     cidx=g_data["sids"].tolist().index(sid)%g_clientnum
-    # cidx=0
-    
-    # print("tidx:", tidx, cidx, flush=True)
 
-    data=retry_fetch_ohlcv_h5fs(savename, 100, sid, frequency, start_tm, end_tm, cidx)
+    succnt=1
     symbolidx=g_data["sids"].tolist().index(sid)
-    succnt=0
-    if data is None:
-        print("error tm update", frequency, sid, tools.tmu2i(start_tm), tools.tmu2i(end_tm), flush=True)
-        return -1
-    for item in data:
-        tm=item[0]
-        tmidx=gettmidx(tm, frequency)
-        
-        if tm >=start_tm and tm < end_tm:
-            succnt+=1
-            for idx,key in enumerate(kline_fields):
-                h5f[savename+"_"+key][tmidx-off, symbolidx]=item[idx]
-        else:
-            # print("error tm update", sid, tools.tmu2i(start_tm), tools.tmu2i(end_tm), tools.tmu2i(tm))
-            continue
+    target_items=retry_fetch_ohlcv_h5fs(savename, 100, sid, frequency, start_tm, end_tm, cidx)
+    for idx,key in enumerate(kline_fields):
+        h5f[savename+"_"+key][:, symbolidx]=target_items[key].values
+    
     print("end update", savename, frequency, sid, tools.tmu2i(start_tm), tools.tmu2i(end_tm), succnt, flush=True)
     return succnt
     
@@ -260,10 +228,11 @@ def bs_dumpdayh5(ss, end_tm,  frequency, savename):
         #         exit(0)
         for sidx, sid in enumerate(ss):
             fetchfunc(sid)
-        if (np.isfinite(dd[savename+"_close"][:,0]).sum()==dd[savename+"_close"].shape[0] and
-            np.isfinite(dd[savename+"_close"][:,1]).sum()==dd[savename+"_close"].shape[0])  \
-                or (fixend_tm >= tools.tmi2u(20230324200000) and fixend_tm <= tools.tmi2u(20230325080000)):
-            break
+        # if (np.isfinite(dd[savename+"_close"][:,0]).sum()==dd[savename+"_close"].shape[0] and
+        #     np.isfinite(dd[savename+"_close"][:,1]).sum()==dd[savename+"_close"].shape[0])  \
+        #         or (fixend_tm >= tools.tmi2u(20230324200000) and fixend_tm <= tools.tmi2u(20230325080000)):
+        #     break
+        break
         print("data error:", savename, tools.tmu2i(start_tm), tools.tmu2i(end_tm))
         time.sleep(60)
     
@@ -284,8 +253,6 @@ def bs_dumpdayh5(ss, end_tm,  frequency, savename):
     
     tpl.end()
     print("save succ", savename, frequency, tools.tmu2i(start_tm), tools.tmu2i(end_tm), tpl.to_string(), flush=True)
-    for client in um_futures_clients.um_futures_clients:
-        print(client.use, client.proxies, flush=True)
     return
     
 class GetKline:
@@ -350,25 +317,19 @@ def updateforover():
         tmu=int(tm*10)*100
         downloadidx=getdlastidx()
         start_tm=tools.tmi2u(g_data["min1info_tm"][downloadidx])
-        if tmu > start_tm+int(msperday/2):
-            end_tm=start_tm+int(g_mspermin*720)
+        if tmu > start_tm+int(msperday):
+            end_tm=start_tm+int(g_mspermin*1440)
         else:
             end_tm=tmu-int(g_mspermin*0) #delay 3 min
             tmsecond=tools.tmu2i(tmu)
-            # if int(tmsecond / 100+1)%100 in [0, 15, 30, 45]:
-            #     um_futures_clients.test_client_ping()
-            #     um_futures_clients.test_client_ping()
                 
-            # # if not ((int(tmsecond / 100)%10 in [0,5]) \
-            # if not (int(tmsecond / 100)%100 in [0,15, 30, 45] \
-            # # if not (int(tmsecond / 100)%100 in [0, 30] \
-            #         and tmsecond %100 > 1 \
-            #             and end_tm-start_tm > g_mspermin):
+            if not ((int(tmsecond / 100)%1 in [0,5]) \
+                    and tmsecond %100 > 1 \
+                        and end_tm-start_tm > g_mspermin):
 
-            #     time.sleep(1)
-            #     continue
+                time.sleep(1)
+                continue
 
-                
         print("start update to:", tools.tmu2i(start_tm), tools.tmu2i(end_tm), tools.tmu2i(tmu), flush=True)
         tpl=tools.TimeProfilingLoop("updatedata")
         bs_dumpdayh5(g_data["sids"], end_tm, "1m", "min1info")

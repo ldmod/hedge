@@ -148,7 +148,6 @@ class Conon1445():
             min1i=ti
             tmdata(min1i)
             
-            
             self.trainnd(min1i)
             x, vf, hidden = self.inffer(min1i)
             

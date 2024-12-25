@@ -149,7 +149,9 @@ class WdMinKline():
             return
     
         while True:
+            client = None
             try:
+                
                 if g_cfg["ktype"] == 'PERPETUAL':
                     client = UMFuturesWebsocketClient(
                         on_message=on_message_wrapper,
@@ -172,6 +174,10 @@ class WdMinKline():
             except Exception as e:
                 print(f"Error of own create_websocket_client: {str(e)}",
                       threading.get_ident(), symbols, time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), flush=True)
+            if not client is None:
+                client.stop()
+                print(f"WebSocket close. ", symbols, time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), flush=True)
+                del client
             time.sleep(10)
                 
     def subscribe_and_write(self, client):
@@ -234,7 +240,7 @@ class WdMinKline():
                 endTm = df['opentm']
                 if formTm>endTm:
                     print(f"warning formTm {symbol} formTm:{tools.tmu2i(formTm)}>endTm{tools.tmu2i(endTm)}", flush=True) 
-                    break
+                    continue
                 datas = fetch_and_add_data(umcs, symbol, formTm, endTm)
                 for data in datas:
                     day=str(tools.tmu2i(data["opentm"]))[:8]

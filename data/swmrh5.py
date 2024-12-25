@@ -37,7 +37,7 @@ class H5Swmr(object):
                                           maxshape = (None, ), chunks = (1024000,), dtype=dtype)
             self.h5f.swmr_mode =True
 
-    def append_dict(self, dd):
+    def append_dict(self, dd, tmField="opentm"):
         old_len = self.h5f[list(self.h5f.keys())[0]].shape[0] 
         new_len = old_len + 1
         for key in dd.keys():
@@ -48,7 +48,7 @@ class H5Swmr(object):
             
         self.h5f.flush()
         
-    def append(self, df_append):
+    def append(self, df_append, tmField="opentm"):
         mk=0
         for key, vtype in self.columns:
             if key in df_append.columns and tools.s2type(vtype)==df_append[key].dtype:
@@ -70,6 +70,8 @@ class H5Swmr(object):
         dd={}
         dataLen = self.h5f[tmField].shape[0]
         for key in self.h5f.keys():
+            self.h5f[key].refresh()
+            assert self.h5f[key].shape[0] >= dataLen
             value=self.h5f[key][dataLen-cnt:dataLen]
             dd[key]=value
         dd=pd.DataFrame(dd)
@@ -79,6 +81,8 @@ class H5Swmr(object):
     def front_items(self, cnt, tmField="opentm"):
         dd={}
         for key in self.h5f.keys():
+            self.h5f[key].refresh()
+            assert self.h5f[key].shape[0] >= cnt
             value=self.h5f[key][:cnt]
             dd[key]=value
         dd=pd.DataFrame(dd)
@@ -88,6 +92,8 @@ class H5Swmr(object):
     def get_items(self, startIdx, endIdx, tmField="opentm"):
         dd={}
         for key in self.h5f.keys():
+            self.h5f[key].refresh()
+            assert self.h5f[key].shape[0] >= endIdx
             value=self.h5f[key][startIdx:endIdx]
             dd[key]=value
         dd=pd.DataFrame(dd)

@@ -24,13 +24,16 @@ def checkdata(dr, min1i, sidx):
     open=dr["min1info_open"][min1i-1, sidx]
     volume=dr["min1info_volume"][min1i-1, sidx]
     item=um_futures_client.continuous_klines(dr["sids"][sidx], "PERPETUAL","1m", startTime=tools.tmi2u(tm), limit=1)
-    if (len(item)<1):
+    if (tools.tmu2i(item[0][0]) != tm):
         aa=0
-        return
+        return 0
     cclose=float(item[0][kline_fields.index("close")])
     cvolume=float(item[0][kline_fields.index("volume")])
     print(tm, dr["sids"][sidx], sidx, (close-cclose)/close, (volume-cvolume)/volume,flush=True)
-    return
+    if abs(cclose/close-1.0)>0.001 or abs(cvolume/volume-1.0) > 0.001:
+        print(tm, dr["sids"][sidx], sidx, abs(cclose/close-1.0), abs(cvolume/volume-1.0),flush=True)
+        return 1
+    return 0
 
 def checkdata2(dr, min1i, sidx):
     tm=dr["min1info_tm"][min1i-1]
@@ -54,11 +57,12 @@ if __name__ == "__main__":
     ud.readuniverse(ud.g_data)
     lasteddownload=dmap.read_memmap(ud.g_data)
     dr=ud.g_data
-    cnt=10000
-    a=np.random.randint(lasteddownload-1440, lasteddownload, size=[cnt])
+    cnt=1000
+    a=np.random.randint(lasteddownload-1440*1, lasteddownload, size=[cnt])
     b=np.random.randint(0, dr["sids"].shape[0], size=[cnt])
+    loss_cnt=0
     for i in range(a.shape[0]):
-        checkdata(dr, a[i], b[i])
-        # checkdata2(dr, a[i], b[i])
+        loss_cnt+=checkdata(dr, a[i], b[i])
+    print("loss_ratio:", loss_cnt/cnt)
     
     

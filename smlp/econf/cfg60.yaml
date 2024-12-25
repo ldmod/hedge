@@ -1,8 +1,8 @@
 name: "smlp"
 modelpath : "../model_states/infmodel/"
-modelname : "tsmlpv260"
+modelname : "nsmlpv260"
 logpath : "./logs"
-logname : "smlpv260.log"
+logname : "nsmlpv260.log"
 # onlyread : True
 tmdelta : 60
 reduce : 60

@@ -3,7 +3,7 @@
 pwd
 `ps aux | grep wd_minkline.py | grep -v grep | awk '{print $2}' | xargs kill -9`
 sleep 1
-llen=30
+llen=10
 for (( idx=0 ; idx < ${llen} ; idx++))
 do
     #echo $idx

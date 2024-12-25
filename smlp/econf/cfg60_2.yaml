@@ -1,8 +1,8 @@
 name: "smlp"
 modelpath : "../model_states/infmodel/"
-modelname : "tsmlpv260_2"
+modelname : "nsmlpv260_2"
 logpath : "./logs"
-logname : "smlpv260_2.log"
+logname : "nsmlpv260_2.log"
 # onlyread : True
 tmdelta : 60
 reduce : 60
@@ -15,9 +15,9 @@ traindelay : 2
 realtime : 0
 savepred : True
 outvalue : ["rank", "rank1", "rank2", "rank3"]
-startdti : 288000
+startdti : 288030
 targetmin1idx : 210
-savedelta : 2880
+savedelta : 2850
 traindays : []
 sampleinsnum : 1
 dumpres : False
@@ -36,10 +36,13 @@ min15corrsize : 128
 min15m : False
 min5m : True
 min1m : True
-min5seqlen : 512
-min1seqlen : 512
+min5seqlen : 256
+min1seqlen : 256
 mseqlen : 8
-reserved : 8
+# min5seqlen : 1024
+# min1seqlen : 1024
+# mseqlen : 16
+reserved : 4
 seqlayer3 : 0
 orim : True 
 tvrratio : 5.0
