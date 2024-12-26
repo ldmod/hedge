@@ -325,7 +325,7 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
         tvrs.append(tvr)
         mis.append(mi.sum())
         
-        mret=(lret+sret)/2-tvr/money
+        mret=(lret+sret)/money/2*10000-tvr/money*1.5
         mrets.append(mret)
         
         sa_lrets.append(lret-realretmean*money-tvr/money/2)
@@ -378,10 +378,10 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
  
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test for argparse', formatter_class=argparse.RawTextHelpFormatter)
-    # parser.add_argument('--start_date', help='start_date', default=20240101000000, type=int)
-    parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
-    # parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)
-    parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
+    parser.add_argument('--start_date', help='start_date', default=20240101000000, type=int)
+    # parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
+    parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)
+    # parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
     args = parser.parse_args()
     dm.init()
     dr=dm.dr
@@ -389,7 +389,7 @@ if __name__ == "__main__":
     
     ban_symbols=dr["ban_symbols_at"]
     
-    path="/home/nb/v1/cryptoqt/smlp/model_states/infmodel/tsmlpv230_2/res"
+    path="/home/nb/v1/cryptoqt/smlp/model_states/infmodel/nsmlpv230/res"
 
     aa=run_alpha(int(conts.h1mincnt/2), partial(min15_alpha.readcsv_v2avg,
             path=path, fields=["pred2"]),
@@ -404,7 +404,7 @@ if __name__ == "__main__":
             # ban_symbols=ban_symbols,
             # ban_hours=dr["ban_hours_less"],
               start=args.start_date, end=args.end_date, 
-              money=10000, tratio=0.2, lb_ratio=0.0)
+              money=10000, tratio=0.1, lb_ratio=0.0)
     # print("\nsummary:", args.start_date, "~", args.end_date, "sum ret:", aa["ret"].sum())
     
     stats=aa.groupby("month").mean()
