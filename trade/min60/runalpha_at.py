@@ -377,6 +377,7 @@ def readcsv_v2avg(dr, min1i, path="/home/crypto/smlpv2/cryptoqt/smlp/model_state
  
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test for argparse', formatter_class=argparse.RawTextHelpFormatter)
+    # parser.add_argument('--start_date', help='start_date', default=20231001000000, type=int)
     # parser.add_argument('--start_date', help='start_date', default=20240101000000, type=int)
     parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
     # parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)

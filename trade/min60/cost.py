@@ -129,7 +129,7 @@ if __name__ == '__main__':
     while True:
         time.sleep(1)
         cur_sec = int(time.time())
-        if  cur_sec > last_sec + (min_delta * 60) + 30:
+        if  cur_sec > last_sec + (min_delta * 60) + 300:
             start_time = int(cur_sec/(min_delta * 60))*(min_delta * 60) - (min_delta * 60) 
             start_index = tools.tmu2i(start_time*1000)
             total_account_value = get_account_value(clients)
@@ -174,6 +174,7 @@ if __name__ == '__main__':
                     ret = np.nanmean(dr["min1info_vwap"][min1i:min1i + lookback_mins], axis=0) / \
                         np.nanmean(dr["min1info_vwap"][min1i - min_delta:min1i - min_delta + lookback_mins], axis=0) - 1.0
                     target = pd.read_csv(cfg["signal_path"]+"/"+str(tools.tmu2i(bookw_tm))+"_book.csv")
+                    target = target[["sid","bookw", "alpha"]]
                     target["ret"]=ret
                     target.rename(columns={'sid': 'symbol'}, inplace=True)
                     target=pd.merge(target, pos, on=["symbol"], how="left").set_index("symbol")
@@ -200,70 +201,22 @@ if __name__ == '__main__':
                     trade_data.sort_values(by="curtm", inplace=True)
                     trade_data["c_m"]=trade_data["price"]*trade_data["c_q"]
                     trade_data=trade_data[["order_id", "symbol", "c_m", "c_q"]]
-                    
-                    order_data=tools.open_csv_copy(cfg["save_order_info_path"]+"_"+str(cur_day)+".h5")['data']
-                    order_data=order_data[(order_data["curtm"] >= tools.tmu2i(s_tm)) & (order_data["curtm"] < tools.tmu2i(e_tm+10000))]
-                    order_data=view_order_info.process_order_data(order_data)
-                    order_data=pd.merge(order_data, trade_data, on=["symbol", "order_id"], how="right")
-                    dfagg=order_data.groupby('symbol')
+                    df_merge=trade_data[["symbol", "c_m", "c_q"]].groupby('symbol').agg("sum")
+                    df_merge["c_p"] = df_merge["c_m"]/df_merge["c_q"]
+                    df_stats=pd.merge(df, df_merge, on=["symbol"], how="right")
 
-                    select_columns = ["curtm",    "symbol",    "cr",  "f_money",  "t_money",
-                      "b_money",  "o_money",  "c_m",  "o_price", "min5vwap",  "ysl",    
-                      "svwap" ,    
-                      # "bvwap",   
-                      "a_shift",
-                      "alpha",  "tratio",  "tr_ratio", "ecr", "cr_avg",
-                      # "bp3_mbr", "bp3_msr",
-                      # "lsr" , "ls_mom",
-                      # "ls_merge", 
-                      # "adav", "accv", 
-                      # "dv", 
-                      # "pred", 
-                      # "pred_mom",
-                      "pred_merge",]
-                    order_data=order_data[select_columns]
-                    
-                    df_stats=(dfagg.last())[["curtm", "cr", "f_money", "d_money", "t_money", "b_money",
-                                    "cur_money", "min5vwap", 
-                                    ]]
-                    df_stats[["svwap", "bvwap", "alpha", "tratio", "tr_ratio", "cr_avg"]] = dfagg[["svwap", "bvwap", "alpha", "tratio", "tr_ratio", "cr_avg"]].agg("mean")
-                    
-                    df_stats["ysl"] = dfagg["ysl"].agg("mean").round(2)
-                    df_stats["o_money"]=dfagg["o_money"].agg("sum").round(2)
-                    df_stats["c_q"]=dfagg["c_q"].agg("sum").round(6)
-                    df_stats["c_m"]=dfagg["c_m"].agg("sum").round(2)
-                    df_stats=pd.merge(df_stats, df, on=["symbol"], how="left")
                     df_stats["cost"]=(df_stats["vwap"]*df_stats["c_q"]-df_stats["c_m"]).round(2)
-                    c_price=df_stats["c_m"]/df_stats["c_q"]
-                    df_stats.insert(df_stats.columns.tolist().index('min5vwap'), 'c_price', c_price)
-                    df_stats[["a_shift"]]=dfagg[["a_shift"]].agg("mean").round(2)
-                    df_stats=df_stats[["curtm", "cr", "f_money", "c_m", "t_money", "b_money",
-                                    "cur_money", "c_price", "min5vwap", "vwap", "ysl", "alpha", "svwap", "bvwap",
-                                    "tratio", "tr_ratio", "cr_avg", "a_shift", "cost"]]
-                    df_stats["cr"]=df_stats["c_m"]/df_stats["f_money"]
-                    df_stats=df_stats.drop(columns=["cur_money"])
-                    all_f_money=(df_stats["f_money"]).abs().sum()
                     complete_money=(df_stats["c_m"]).abs().sum()
-                    delta_money = (df_stats["c_m"]-df_stats["f_money"]).abs().sum()
                     
                     logger.info(f"本次交易金额$: {complete_money}")
                     logger.info(f"本次冲击成本$: {df_stats['cost'].sum(axis=0)}")
                     logger.info(f"本次冲击成本bp: {df_stats['cost'].sum(axis=0) / complete_money * 10000}")
-                    logger.info(f"complete_ratio:{1-delta_money/all_f_money} all_f_money:{all_f_money} complete_money:{complete_money} delta_money:{delta_money}")
-                    logger.info(f"total_delta_cost: {total_delta_cost}")
                     total_bp_cost += df_stats['cost'].sum(axis=0)
                     total_bp_money += complete_money
                     logger.info(f"今日累计冲击成本$: {total_bp_cost}")
                     logger.info(f"今日累计交易金额$: {total_bp_money}")
                     logger.info(f"今日累计冲击成本bp: {total_bp_cost / total_bp_money * 10000}")
                     logger.info(f"\ndetail: \n{df_stats}")
-                    
-                    order_data["curtm"]=order_data["curtm"].astype(str)
-                    order_data.sort_values(by="curtm", inplace=True)
-                    for symbol in df_stats.index.values:
-                        a=order_data[order_data["symbol"]==symbol]
-                        print(f"curtm:{current_index} -- symbol:{symbol}", flush=True)
-                        print(f"{a}", flush=True)
                         
 
                     # 信号步进

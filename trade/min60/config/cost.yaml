@@ -8,11 +8,12 @@ min_delta : 60
 minute_list : [5]
 lookback_mins : 2
 trade_min : 5
+posRatio : 0.5
 log_path : "./logs/costinfo.log"
 
 um_client:
-    key : 'kWRzpZFuJOfI7DOZA8iKdbaORoGDAVXNU8AJi9oQQ8lyDImRpK8dkFOS7Ywuoxez'
-    secret : 'YVG8LfKPdMqGTyTIk4r8g1pvCfUUXV1NjO5xL050x3OyYY8aWWNzXWLk7Y3BmC8G'
+    key : 'D2pGOJOFBe0vLeRVTB3lb1wKE4XvZIIZv8QCSltLEfj4pJTIOYFZA4lZdma5tTER'
+    secret : 'tPwCT5KG5M2Jtwyk34lvGHvTQZAaFo22iKgl5Pr01ZoSPOgPxso6HvhJn0J4wVRs'
     minmaxcnt : 150
     timeout : 2
     reuse_min : 10

@@ -173,6 +173,7 @@ if __name__ == "__main__":
     available_token_map = {}
     for sid in dr["sids"]:
         available_token_map[sid]=0
+    time.sleep(10)
     while True:
         item = None
         try:
@@ -181,11 +182,13 @@ if __name__ == "__main__":
             time.sleep(1.0)  # wait message
         cur_sec=int(time.time())
         
-        if random.random() < 0.0005:
-            lkey=client.renew_listen_key(cur_listen_key)
-            print(f"renew listenkey",  tools.tmu2i(int(time.time())*1000), flush=True)
+        # if random.random() < 0.05:
+        #     lkey=client.renew_listen_key(cur_listen_key)
+        #     print(f"renew listenkey",  tools.tmu2i(int(time.time())*1000), flush=True)
             
         if cur_sec > last_position_tm + 60 and cur_sec % 60 >=5:
+            lkey=client.renew_listen_key(cur_listen_key)
+            print(f"renew listenkey",  tools.tmu2i(int(time.time())*1000), flush=True)
             curtm = tools.tmu2i((cur_sec-cur_sec%60)*1000)
             cur_day=int(curtm/1000000)
             value=get_account_value(clients)
