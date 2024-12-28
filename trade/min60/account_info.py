@@ -60,6 +60,7 @@ def create_websocket_client(cfg, queue):
         
     while True:
         try:
+            cur_listen_key = ""
             my_client = UMFuturesWebsocketClient(on_message=on_message, proxies=cfg["myproxies"])
             client = UMFutures(key=cfg["key"],
                                secret=cfg["secret"],
@@ -77,6 +78,7 @@ def create_websocket_client(cfg, queue):
             print(f"Error of own create_websocket_client: {str(e)}",
                   threading.get_ident(), time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), flush=True)
             # raise
+        time.sleep(10)
             
 
 def get_account_value(clients):
@@ -187,8 +189,11 @@ if __name__ == "__main__":
         #     print(f"renew listenkey",  tools.tmu2i(int(time.time())*1000), flush=True)
             
         if cur_sec > last_position_tm + 60 and cur_sec % 60 >=5:
-            lkey=client.renew_listen_key(cur_listen_key)
-            print(f"renew listenkey",  tools.tmu2i(int(time.time())*1000), flush=True)
+            try:
+                lkey=client.renew_listen_key(cur_listen_key)
+                print(f"renew listenkey",  tools.tmu2i(int(time.time())*1000), flush=True)
+            except Exception as e:
+                print(f"error:renew listenkey {str(e)}",  tools.tmu2i(int(time.time())*1000), flush=True)
             curtm = tools.tmu2i((cur_sec-cur_sec%60)*1000)
             cur_day=int(curtm/1000000)
             value=get_account_value(clients)

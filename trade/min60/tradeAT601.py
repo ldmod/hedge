@@ -443,9 +443,10 @@ def update_positions(client, position_value_map, position_amount_map, logger_err
         return True
 
 # Change leverage(1)
-def change_leverage(client, symbol, logger_error):
+def change_leverage(client, symbol, logger_error, leverage=20):
     try:
-        client.change_leverage(symbol=symbol, leverage=10)
+        res=client.change_leverage(symbol=symbol, leverage=leverage)
+        logger_error.info(f"change_leverage: {symbol}  {res}" )
     except Exception as e:
         logger_error.info("change_leverage: " + str(symbol) + str(e))
 
@@ -652,6 +653,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
                 next_tm = tools.tmu2i(int(tools.tmi2u(current_tm) / 5000) * 5000 + 6000)
                 orders = gorder.update_and_gorders(current_tm, position_value_map)
                 logger_trade.info(f"{current_tm} - {next_tm} \n\n gorder_smpairs:{gorder.smpairs}")
+                logger_trade.info(f"{current_tm} - {next_tm}  orders detail:{orders}")
                 completed_sids=gorder.get_completed_symbols()
                 # Step6B: Handle order ids (queue)
                 for order_index, order in enumerate(orders):

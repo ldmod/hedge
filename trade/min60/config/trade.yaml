@@ -1,7 +1,7 @@
 signal:
   base_path: '/home/nb/signal/'
   pred_dir: 'predv260_1w'
-  money_scale : 0.5
+  money_scale : 1.0
 
 minutes : 60
 trade_min : 5

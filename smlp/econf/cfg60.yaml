@@ -17,7 +17,7 @@ savepred : True
 outvalue : ["rank", "rank1", "rank2", "rank3"]
 startdti : 288000
 targetmin1idx : 210
-savedelta : 2880
+savedelta : 14400
 traindays : []
 sampleinsnum : 1
 dumpres : False

@@ -8,7 +8,7 @@ min_delta : 60
 minute_list : [5]
 lookback_mins : 2
 trade_min : 5
-posRatio : 0.5
+posRatio : 1.0
 log_path : "./logs/costinfo.log"
 
 um_client:

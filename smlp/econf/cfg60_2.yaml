@@ -15,9 +15,9 @@ traindelay : 2
 realtime : 0
 savepred : True
 outvalue : ["rank", "rank1", "rank2", "rank3"]
-startdti : 288030
+startdti : 288000
 targetmin1idx : 210
-savedelta : 2850
+savedelta : 14400
 traindays : []
 sampleinsnum : 1
 dumpres : False
@@ -187,7 +187,7 @@ seqsimilityloss : False
 seqmse : False
 ynorm : True
 
-delaymin : 2
+delaymin : 5
 unoinmodel : False
 seqmergex : False
 encodersize : 512
