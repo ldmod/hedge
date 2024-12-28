@@ -1,0 +1,25 @@
+signal:
+  #base_path: '/home/nb/signal/'
+  base_path: '/home/ubuntu/signal/'
+  pred_dir: 'predv260_1w'
+  money_scale : 1.0
+
+minutes : 60
+trade_min : 30
+signal_wait_max : 65
+  #proxy: {http : 'http://127.0.0.1:33881', https : 'http://127.0.0.1:33881'}
+timeout : 2
+order_hours : [5]
+gorder:
+    splitcnt : 4
+    cancel_delay : 1
+
+gorder2:
+    splitcnt : 4
+    cancel_delay : 1
+
+processes:
+  - id: 0
+    api_key : 'kWRzpZFuJOfI7DOZA8iKdbaORoGDAVXNU8AJi9oQQ8lyDImRpK8dkFOS7Ywuoxez'
+    api_secret : 'YVG8LfKPdMqGTyTIk4r8g1pvCfUUXV1NjO5xL050x3OyYY8aWWNzXWLk7Y3BmC8G'
+
