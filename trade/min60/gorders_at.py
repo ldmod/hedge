@@ -215,7 +215,7 @@ class GenerateOrders:
         return  orders
     
     def restart(self, curtm, endtm, delta, smpairs):
-        dm.init()
+        dm.init_less()
         s1i=int(sk.gtmidx_i(curtm)/delta)*delta
         self.ends1i=int(sk.gtmidx_i(endtm)/delta)*delta
         self.delta=delta

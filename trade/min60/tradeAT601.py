@@ -195,7 +195,7 @@ def notify(msg):
 def get_logger(logger_name, log_file, level=logging.INFO):
     logger = logging.getLogger(logger_name)
     formatter = logging.Formatter('%(asctime)s : %(message)s', "%Y-%m-%d %H:%M:%S")
-    fileHandler = logging.FileHandler(log_file, mode='a')
+    fileHandler = logging.FileHandler(log_file, mode='w')
     fileHandler.setFormatter(formatter)
 
     logger.setLevel(level)
@@ -443,10 +443,9 @@ def update_positions(client, position_value_map, position_amount_map, logger_err
         return True
 
 # Change leverage(1)
-def change_leverage(client, symbol, logger_error, leverage=20):
+def change_leverage(client, symbol, logger_error):
     try:
-        res=client.change_leverage(symbol=symbol, leverage=leverage)
-        logger_error.info(f"change_leverage: {symbol}  {res}" )
+        client.change_leverage(symbol=symbol, leverage=10)
     except Exception as e:
         logger_error.info("change_leverage: " + str(symbol) + str(e))
 
@@ -519,7 +518,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
     # Init client
     proxies = cfg["proxy"] if "proxy" in cfg else None
     client = UMFutures(key=api_key, secret=api_secret, proxies=proxies, timeout=cfg["timeout"])
-    clients = [UMFutures(key=api_key, secret=api_secret, proxies=proxies, 
+    clients = [UMFutures(key=api_key, secret=api_secret, proxies=proxies,
                          timeout=cfg["timeout"]) for _ in range(10)]
 
     logger_trade.info(f"value map is: {position_value_map}")
@@ -527,7 +526,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
     logger_trade.info(f"------ process cfg: {cfg} ------")
 
     # Start index of signal file(based on current timestamp)
-    signal_index = time.strftime("%Y%m%d%H%M00", time.localtime(int(time.time() / (cfg["minutes"]*60) + 1) * (cfg["minutes"]*60 )))
+    signal_index = time.strftime("%Y%m%d%H%M00", time.localtime(int(time.time() / (cfg["minutes"]*60) + 0) * (cfg["minutes"]*60 )))
 
     # Percision for price and quantity(3 means .00X)
 
@@ -613,7 +612,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
             end_tm = get_tm_by_min(signal_index, cfg["trade_min"])
             gorder.restart(start_tm, end_tm, 5, sm_pairs)
             logger_trade.info(f"Restart algo order module: {start_tm} - {end_tm}\n gorder_smpairs:{gorder.smpairs}")
-            
+
             canceled_sids=[]
             delta_map = {}
             for i in range(retry_count):
@@ -653,7 +652,6 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
                 next_tm = tools.tmu2i(int(tools.tmi2u(current_tm) / 5000) * 5000 + 6000)
                 orders = gorder.update_and_gorders(current_tm, position_value_map)
                 logger_trade.info(f"{current_tm} - {next_tm} \n\n gorder_smpairs:{gorder.smpairs}")
-                logger_trade.info(f"{current_tm} - {next_tm}  orders detail:{orders}")
                 completed_sids=gorder.get_completed_symbols()
                 # Step6B: Handle order ids (queue)
                 for order_index, order in enumerate(orders):
@@ -736,10 +734,10 @@ if __name__ == "__main__":
     # Init config file
     with open('./config/trade.yaml', 'r') as file:
         cfg = yaml.safe_load(file)
-        
+
     # Signal file index delta
     time_delta = timedelta(minutes=cfg["minutes"])
-    
+
     api_key = ''
     api_secret = ''
     for process_config in cfg['processes']:
@@ -755,6 +753,6 @@ if __name__ == "__main__":
     position_value_map = copy.deepcopy(available_token_map)
     position_amount_map = copy.deepcopy(available_token_map)
     process_task(position_value_map, position_amount_map, api_key, api_secret, cfg, logger_trade, logger_error)
-    
-    
-    
+
+
+

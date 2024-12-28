@@ -102,6 +102,19 @@ def init():
     # secdr=secdata.secdr
     ####### read base data ###############
     
+def init_less():
+    global secdata, secdr
+    cfgpath=os.path.abspath(__file__+"../..")+"/config/dm.yaml"
+    with open(cfgpath) as f:
+        g_cfg = yaml.load(f, Loader=yaml.FullLoader)
+        
+    for key in g_cfg.keys():
+        dr[key]=g_cfg[key]
+        
+    ####### read base data ###############
+    ud.readuniverse(dr)
+    load_ban_symbols(dr, g_cfg)
+    
 if __name__ == "__main__":
     init()
     tm=20240910104900
