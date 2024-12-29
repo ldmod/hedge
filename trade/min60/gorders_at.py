@@ -201,8 +201,9 @@ class GenerateOrders:
                             )
             ##############    
 
-            price=[0]
-            tmporders={0:money}
+            tmporders={}
+            for bp in self.cfg["expand"]:
+                tmporders[bp]=money/len(self.cfg["expand"])
 
             keylist=sorted(tmporders.keys()) if  money > 0 else sorted(tmporders.keys(), reverse=True)
             for key in keylist:

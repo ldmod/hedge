@@ -378,10 +378,10 @@ def readcsv_v2avg(dr, min1i, path="/home/crypto/smlpv2/cryptoqt/smlp/model_state
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test for argparse', formatter_class=argparse.RawTextHelpFormatter)
     # parser.add_argument('--start_date', help='start_date', default=20231001000000, type=int)
-    # parser.add_argument('--start_date', help='start_date', default=20240101000000, type=int)
-    parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
-    # parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)
-    parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
+    parser.add_argument('--start_date', help='start_date', default=20240101000000, type=int)
+    # parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
+    parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)
+    # parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
     args = parser.parse_args()
     dm.init()
     dr=dm.dr
@@ -389,7 +389,7 @@ if __name__ == "__main__":
     
     ban_symbols=dr["ban_symbols_at"]
     
-    path="/home/nb/v1/cryptoqt/smlp/model_states/infmodel/nsmlpv260/res"
+    path="/home/nb/v1/cryptoqt/smlp/model_states/infmodel/nsmlpv2120/res"
     singalDelayMin = 0
     
     # path="/home/nb/v1/cryptoqt/smlp/model_states/infmodel/nsmlpv260_2/res"
@@ -397,20 +397,20 @@ if __name__ == "__main__":
     pathmin1 = "/home/nb/v1/cryptoqt/smlp/model_states/infmodel/tsmlpv21/res"
     #p1 20-10-1-1-0.2
     #p2 50-20-1-0-0.1
-    aa=run_alpha(int(conts.h1mincnt/1), partial(readcsv_v2avg,
+    aa=run_alpha(int(conts.h1mincnt*2), partial(readcsv_v2avg,
             path=path, 
             pathmin1=pathmin1,
             fields=["pred2"]),
             path=path,
             tsf=None,endflag=True, 
-            delaymin=2,
+            delaymin=5,
             aftermin = 0,
             alphaavg=alphaavg2,
             singalDelayMin = singalDelayMin,
             # calcw=calcw,
-            # calcw=partial(calcwtopk, cnt=10), 
-            calcw=partial(calcwtopkliqV3, ratio_limit=50, scale=3, money_limit=1000000, 
-                          top_limit=20, min_delta=1000), 
+            calcw=partial(calcwtopk, cnt=1), 
+            # calcw=partial(calcwtopkliqV3, ratio_limit=50, scale=3, money_limit=1000000, 
+            #               top_limit=20, min_delta=1000), 
             # ban_symbols=ban_symbols,
             # ban_hours=dr["ban_hours_less"],
               start=args.start_date, end=args.end_date, 

@@ -12,7 +12,7 @@ from binance.um_futures import UMFutures
 from datetime import datetime, timedelta
 from dingtalkchatbot.chatbot import DingtalkChatbot
 # import cryptoqt.bsim.gorders as gorders
-import cryptoqt.trade.min30.gorders_at as gorders
+import cryptoqt.trade.min60.gorders_at as gorders
 import cryptoqt.bsim.ticker as ticker
 import cryptoqt.data.updatedata as ud
 import cryptoqt.data.sec_klines.sec_klines as sk
@@ -304,16 +304,17 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
         try:
             symbol, _, order_price, order_money, order_info = order
             order_id = order_info["order_id"]
-            logger_trade.info(f"Order is: {symbol}, {order_price}, {order_money}, {order_id}")
+            # logger_trade.info(f"Order is: {symbol}, {order_price}, {order_money}, {order_id}")
             if abs(order_money) < get_threshold(symbol):
                 return False
-
+            result=False
             if order_money > 0:
                 if request_ask_bid:
                     bid0, bid1, bid2, bid3, bid4 = query_bids(client, symbol, price_precision_map[symbol], logger_error)
-                    logger_trade.info(f"rest api:use best buy price is: {symbol}, {order_price}, {bid0}")
-                    # order_price = min(order_price, bid0)
-                    order_price = bid0
+                    shiftBp = order_price
+                    order_price = bid0*(1+shiftBp/10000)
+                    logger_trade.info(f"rest api:use best buy price is: {symbol} money:{order_money}, price:{order_price}, bid:{bid0}, {shiftBp}")
+                    # order_price = bid0
                     order_info["order_price"] = order_price
                 trade_price = round(order_price, price_precision_map[symbol])
                 trade_amount = round(abs(order_money / order_price), quantity_precision_map[symbol])
@@ -327,9 +328,10 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
             else:
                 if request_ask_bid:
                     ask0, ask1, ask2, ask3, ask4 = query_asks(client, symbol, price_precision_map[symbol], logger_error)
-                    logger_trade.info(f"rest api:use best sell price is: {symbol}, {order_price}, {ask0}")
-                    # order_price = max(order_price, ask0)
-                    order_price = ask0
+                    shiftBp = order_price
+                    order_price = ask0*(1-shiftBp/10000)
+                    logger_trade.info(f"rest api:use best sell price is: {symbol} money:{order_money}, price:{order_price}, ask:{ask0}, {shiftBp}")
+                    # order_price = ask0
                     order_info["order_price"] = order_price
                 trade_price = round(order_price, price_precision_map[symbol])
                 trade_amount = round(abs(order_money / order_price), quantity_precision_map[symbol])
@@ -507,7 +509,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
     pred_dir = cfg['signal']['pred_dir']
 
     # retry count for signal
-    retry_count = 60
+    retry_count = cfg["retry_count"]
     # set for store orderId to cancel order
     cancel_order_id_sets = [set() for _ in range(retry_count)]
 
@@ -526,7 +528,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
     logger_trade.info(f"------ process cfg: {cfg} ------")
 
     # Start index of signal file(based on current timestamp)
-    signal_index = time.strftime("%Y%m%d%H%M00", time.localtime(int(time.time() / (cfg["minutes"]*60) + 0) * (cfg["minutes"]*60 )))
+    signal_index = time.strftime("%Y%m%d%H%M00", time.localtime(int(time.time() / (cfg["minutes"]*60) + 1) * (cfg["minutes"]*60 )))
 
     # Percision for price and quantity(3 means .00X)
 
@@ -610,7 +612,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
 
             start_tm = get_current_tm()
             end_tm = get_tm_by_min(signal_index, cfg["trade_min"])
-            gorder.restart(start_tm, end_tm, 5, sm_pairs)
+            gorder.restart(start_tm, end_tm, cfg["trade_delta"], sm_pairs)
             logger_trade.info(f"Restart algo order module: {start_tm} - {end_tm}\n gorder_smpairs:{gorder.smpairs}")
 
             canceled_sids=[]
@@ -652,6 +654,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
                 next_tm = tools.tmu2i(int(tools.tmi2u(current_tm) / 5000) * 5000 + 6000)
                 orders = gorder.update_and_gorders(current_tm, position_value_map)
                 logger_trade.info(f"{current_tm} - {next_tm} \n\n gorder_smpairs:{gorder.smpairs}")
+                logger_trade.info(f"{current_tm} - {next_tm} \n\n order details:{orders}")
                 completed_sids=gorder.get_completed_symbols()
                 # Step6B: Handle order ids (queue)
                 for order_index, order in enumerate(orders):
