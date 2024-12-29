@@ -325,7 +325,7 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
                 #     reduce='true'
                 if (trade_amount < 0) or (round(trade_price * trade_amount, 2) < get_threshold(symbol)):
                     return True
-                # result = buy(client, trade_amount, symbol, trade_price, order_id, reduce, logger_trade, logger_error)
+                result = buy(client, trade_amount, symbol, trade_price, order_id, reduce, logger_trade, logger_error)
 
             else:
                 if request_ask_bid:
@@ -344,7 +344,7 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
                 #     reduce='true'
                 if (trade_amount < 0) or (round(trade_price * trade_amount, 2) < get_threshold(symbol)):
                     return True
-                # result = sell(client, trade_amount, symbol, trade_price, order_id, reduce, logger_trade, logger_error)
+                result = sell(client, trade_amount, symbol, trade_price, order_id, reduce, logger_trade, logger_error)
 
             return result
         except Exception as e:
