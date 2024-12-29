@@ -202,8 +202,11 @@ class GenerateOrders:
             ##############    
             
             tmporders={}
-            for bp in self.cfg["expand"]:
-                tmporders[bp]=money/len(self.cfg["expand"])
+            if abs(money) > len(self.cfg["expand"])*get_threshold(sid):
+                for bp in self.cfg["expand"]:
+                    tmporders[bp]=money/len(self.cfg["expand"])
+            else:
+                tmporders[self.cfg["expand"][0]]=money
 
             keylist=sorted(tmporders.keys()) if  money > 0 else sorted(tmporders.keys(), reverse=True)
             for key in keylist:
