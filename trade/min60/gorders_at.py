@@ -186,7 +186,10 @@ class GenerateOrders:
             if abs(left_money) < get_threshold(sid):
                 adaptive_money=0
             else:
-                adaptive_money=min(total_money/self.cfg["splitcnt"], left_money)
+                splitcnt = self.cfg["splitcnt"]
+                if abs(target["target_money"]) < 10:
+                    splitcnt+=2
+                adaptive_money=np.sign(total_money)*min(abs(total_money)/splitcnt, abs(left_money))
                 
             money = adaptive_money
             
