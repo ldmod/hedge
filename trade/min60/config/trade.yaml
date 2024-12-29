@@ -2,12 +2,13 @@ signal:
   base_path: '/home/nb/signal/'
   # base_path: '/home/ubuntu/signal/'
   pred_dir: 'predv260_1w'
-  money_scale : 1.0
+  money_scale : 1.2
 
 minutes : 60
 trade_min : 60
 trade_delta : 3
 retry_count : 60
+waitSingalCnt : 0
 signal_wait_max : 65
 proxy: {http : 'http://127.0.0.1:33881', https : 'http://127.0.0.1:33881'}
 timeout : 2
@@ -15,12 +16,12 @@ order_hours : [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
 gorder:
     splitcnt : 8
     cancel_delay : 5
-    expand : [-3]
+    expand : [3]
 
 gorder2:
     splitcnt : 8
     cancel_delay : 5
-    expand : [-4]
+    expand : [4]
 
 processes:
   - id: 0

@@ -200,7 +200,7 @@ class GenerateOrders:
                             leftcnt=leftcnt, 
                             )
             ##############    
-
+            
             tmporders={}
             for bp in self.cfg["expand"]:
                 tmporders[bp]=money/len(self.cfg["expand"])

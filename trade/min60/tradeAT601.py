@@ -310,10 +310,12 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
             result=False
             if order_money > 0:
                 if request_ask_bid:
-                    bid0, bid1, bid2, bid3, bid4 = query_bids(client, symbol, price_precision_map[symbol], logger_error)
+                    bids = query_bids(client, symbol, price_precision_map[symbol], logger_error)
+                    bid0=bids[0]
                     shiftBp = order_price
-                    order_price = bid0*(1+shiftBp/10000)
-                    logger_trade.info(f"rest api:use best buy price is: {symbol} money:{order_money}, price:{order_price}, bid:{bid0}, {shiftBp}")
+                    order_price = max(bid0*(1-shiftBp/10000), bids[round(shiftBp)])
+                    # order_price=bids[round(shiftBp)]
+                    logger_trade.info(f"rest api:use best buy price is: {symbol} money:{order_money}, price:{order_price}, bid:{bids}, {shiftBp}")
                     # order_price = bid0
                     order_info["order_price"] = order_price
                 trade_price = round(order_price, price_precision_map[symbol])
@@ -323,14 +325,16 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
                 #     reduce='true'
                 if (trade_amount < 0) or (round(trade_price * trade_amount, 2) < get_threshold(symbol)):
                     return True
-                result = buy(client, trade_amount, symbol, trade_price, order_id, reduce, logger_trade, logger_error)
+                # result = buy(client, trade_amount, symbol, trade_price, order_id, reduce, logger_trade, logger_error)
 
             else:
                 if request_ask_bid:
-                    ask0, ask1, ask2, ask3, ask4 = query_asks(client, symbol, price_precision_map[symbol], logger_error)
+                    asks = query_asks(client, symbol, price_precision_map[symbol], logger_error)
+                    ask0=asks[0]
                     shiftBp = order_price
-                    order_price = ask0*(1-shiftBp/10000)
-                    logger_trade.info(f"rest api:use best sell price is: {symbol} money:{order_money}, price:{order_price}, ask:{ask0}, {shiftBp}")
+                    order_price = min(ask0*(1+shiftBp/10000), asks[round(shiftBp)])
+                    # order_price=asks[round(shiftBp)]
+                    logger_trade.info(f"rest api:use best sell price is: {symbol} money:{order_money}, price:{order_price}, ask:{asks}, {shiftBp}")
                     # order_price = ask0
                     order_info["order_price"] = order_price
                 trade_price = round(order_price, price_precision_map[symbol])
@@ -340,7 +344,7 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
                 #     reduce='true'
                 if (trade_amount < 0) or (round(trade_price * trade_amount, 2) < get_threshold(symbol)):
                     return True
-                result = sell(client, trade_amount, symbol, trade_price, order_id, reduce, logger_trade, logger_error)
+                # result = sell(client, trade_amount, symbol, trade_price, order_id, reduce, logger_trade, logger_error)
 
             return result
         except Exception as e:
@@ -369,33 +373,35 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
                 break
 
 def query_bids(client, symbol, precision, logger_error):
+    tmpres = [-1, -1, -1, -1, -1]
     try:
         depth = client.depth(symbol=symbol, limit=5)
         if depth['bids'] is None:
-            return -1, -1, -1, -1, -1
+            return tmpres
         if depth['bids'][0] is None:
-            return -1, -1, -1, -1, -1
-        return round(float(depth['bids'][0][0]), precision), round(float(depth['bids'][1][0]), precision), round(
+            return tmpres
+        return [round(float(depth['bids'][0][0]), precision), round(float(depth['bids'][1][0]), precision), round(
             float(depth['bids'][2][0]), precision), round(float(depth['bids'][3][0]), precision), round(
-            float(depth['bids'][4][0]), precision)
+            float(depth['bids'][4][0]), precision)]
     except Exception as e:
         logger_error.info("query_bids " + str(e))
-        return -1, -1, -1, -1, -1
+        return tmpres
 
 
 def query_asks(client, symbol, precision, logger_error):
+    tmpres = [-1, -1, -1, -1, -1]
     try:
         depth = client.depth(symbol=symbol, limit=5)
         if depth['asks'] is None:
-            return -1, -1, -1, -1, -1
+            return tmpres
         if depth['asks'][0] is None:
-            return -1, -1, -1, -1, -1
-        return round(float(depth['asks'][0][0]), precision), round(float(depth['asks'][1][0]), precision), round(
+            return tmpres
+        return [round(float(depth['asks'][0][0]), precision), round(float(depth['asks'][1][0]), precision), round(
             float(depth['asks'][2][0]), precision), round(float(depth['asks'][3][0]), precision), round(
-            float(depth['asks'][4][0]), precision)
+            float(depth['asks'][4][0]), precision)]
     except Exception as e:
         logger_error.info("query_asks: " + str(e))
-        return -1, -1, -1, -1, -1
+        return -tmpres
 
 # Update position side(signal side)
 def modify_position_side(client, logger_error):
@@ -528,7 +534,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
     logger_trade.info(f"------ process cfg: {cfg} ------")
 
     # Start index of signal file(based on current timestamp)
-    signal_index = time.strftime("%Y%m%d%H%M00", time.localtime(int(time.time() / (cfg["minutes"]*60) + 1) * (cfg["minutes"]*60 )))
+    signal_index = time.strftime("%Y%m%d%H%M00", time.localtime(int(time.time() / (cfg["minutes"]*60) + cfg["waitSingalCnt"]) * (cfg["minutes"]*60 )))
 
     # Percision for price and quantity(3 means .00X)
 
