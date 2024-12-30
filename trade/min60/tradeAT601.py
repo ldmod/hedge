@@ -403,7 +403,7 @@ def query_asks(client, symbol, precision, logger_error):
                  round(float(depth['asks'][7][0]), precision), round(float(depth['asks'][8][0]), precision), round(float(depth['asks'][9][0]), precision)]
     except Exception as e:
         logger_error.info("query_asks: " + str(e))
-        return -tmpres
+        return tmpres
 
 # Update position side(signal side)
 def modify_position_side(client, logger_error):
