@@ -392,7 +392,7 @@ def query_bids(client, symbol, precision, logger_error):
 def query_asks(client, symbol, precision, logger_error):
     tmpres = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
     try:
-        depth = client.depth(symbol=symbol, limit=5)
+        depth = client.depth(symbol=symbol, limit=10)
         if depth['asks'] is None:
             return tmpres
         if depth['asks'][0] is None:
@@ -511,7 +511,30 @@ def clear_sets(sets):
     for s in sets:
         s.clear()
 
-
+def clearSymbolPos(client, position_value_map, position_amount_map, logger_error, moneyLimit = 50.0):
+    update_positions(client, position_value_map, position_amount_map, logger_error)
+    for key in position_value_map:
+        try:
+            if abs(position_value_map[key])<moneyLimit and abs(position_value_map[key]) > 0:
+                money=position_value_map[key]
+                pos=position_amount_map[key]
+                params = {
+                    'symbol': key,
+                    'side': 'SELL' if money > 0 else 'BUY',
+                    'type': 'MARKET',
+                    'quantity': abs(pos),
+                    "reduceOnly": "true",
+                    # 'timeInForce': 'GTX'
+                }
+                # logger_trade.info(f"Sell: {symbol}, amount: {amount}, price: {price}")
+                client.new_order(**params)
+        except Exception as e:
+            logger_error.info(str(e))
+    return
+            
+            
+    
+    
 # Trading process
 def process_task(position_value_map, position_amount_map, api_key, api_secret, cfg, logger_trade, logger_error):
     # Signal file path
@@ -744,6 +767,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
             if target_value > 0:
                 deal_ratio = 1 - real_value / target_value
                 logger_trade.info(f"all Delta money: {real_value}, Target money: {target_value}, Ratio: {deal_ratio}")
+            clearSymbolPos(client, position_value_map, position_amount_map, logger_error)
 
         except Exception as e:
             logger_error.info(str(e))

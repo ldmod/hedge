@@ -175,6 +175,7 @@ if __name__ == '__main__':
                         np.nanmean(dr["min1info_vwap"][min1i - min_delta:min1i - min_delta + lookback_mins], axis=0) - 1.0
                     target = pd.read_csv(cfg["signal_path"]+"/"+str(tools.tmu2i(bookw_tm))+"_book.csv")
                     target = target[["sid","bookw", "alpha"]]
+                    target["bookw"]=target["bookw"]*cfg["posRatio"]
                     target["ret"]=ret
                     target.rename(columns={'sid': 'symbol'}, inplace=True)
                     target=pd.merge(target, pos, on=["symbol"], how="left").set_index("symbol")
