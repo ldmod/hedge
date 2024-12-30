@@ -373,23 +373,24 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
                 break
 
 def query_bids(client, symbol, precision, logger_error):
-    tmpres = [-1, -1, -1, -1, -1]
+    tmpres = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
     try:
-        depth = client.depth(symbol=symbol, limit=5)
+        depth = client.depth(symbol=symbol, limit=10)
         if depth['bids'] is None:
             return tmpres
         if depth['bids'][0] is None:
             return tmpres
         return [round(float(depth['bids'][0][0]), precision), round(float(depth['bids'][1][0]), precision), round(
             float(depth['bids'][2][0]), precision), round(float(depth['bids'][3][0]), precision), round(
-            float(depth['bids'][4][0]), precision)]
+            float(depth['bids'][4][0]), precision), round(float(depth['bids'][5][0]), precision), round(float(depth['bids'][6][0]), precision),
+                round(float(depth['bids'][7][0]), precision), round(float(depth['bids'][8][0]), precision), round(float(depth['bids'][9][0]), precision)]
     except Exception as e:
         logger_error.info("query_bids " + str(e))
         return tmpres
 
 
 def query_asks(client, symbol, precision, logger_error):
-    tmpres = [-1, -1, -1, -1, -1]
+    tmpres = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
     try:
         depth = client.depth(symbol=symbol, limit=5)
         if depth['asks'] is None:
@@ -398,7 +399,8 @@ def query_asks(client, symbol, precision, logger_error):
             return tmpres
         return [round(float(depth['asks'][0][0]), precision), round(float(depth['asks'][1][0]), precision), round(
             float(depth['asks'][2][0]), precision), round(float(depth['asks'][3][0]), precision), round(
-            float(depth['asks'][4][0]), precision)]
+            float(depth['asks'][4][0]), precision), round(float(depth['asks'][5][0]), precision), round(float(depth['asks'][6][0]), precision),
+                 round(float(depth['asks'][7][0]), precision), round(float(depth['asks'][8][0]), precision), round(float(depth['asks'][9][0]), precision)]
     except Exception as e:
         logger_error.info("query_asks: " + str(e))
         return -tmpres
@@ -451,9 +453,11 @@ def update_positions(client, position_value_map, position_amount_map, logger_err
         return True
 
 # Change leverage(1)
-def change_leverage(client, symbol, logger_error):
+def change_leverage(client, symbol, logger_error, leverage=20):
     try:
-        client.change_leverage(symbol=symbol, leverage=10)
+        if symbol in ["NMRUSDT"]:
+            leverage=10
+        client.change_leverage(symbol=symbol, leverage=leverage)
     except Exception as e:
         logger_error.info("change_leverage: " + str(symbol) + str(e))
 
@@ -540,8 +544,19 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
 
     # Just one time
     # modify_position_side(client, logger_error)
+    # leverage_brackets=client.leverage_brackets()
+    # lbDict = {}
+    # for lb in leverage_brackets:
+    #     lbDict[lb["symbol"]]=lb
     # for key, value in position_value_map.items():
-    #     change_leverage(client, key, logger_error)
+    #     lb=lbDict[key]
+    #     targetItme = None
+    #     moneylimit=200000
+    #     for item in lb["brackets"]:
+    #         if item['notionalCap'] >=moneylimit:
+    #             targetItme=item
+    #             break
+    #     change_leverage(client, key, logger_error, item['initialLeverage'])
 
     signal_wait_max = 60 * cfg["signal_wait_max"]  # 60s*10min
 
