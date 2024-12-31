@@ -315,7 +315,7 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
                     shiftBp = order_price
                     order_price = max(bid0*(1-shiftBp/10000), bids[round(shiftBp)])
                     # order_price=bids[round(shiftBp)]
-                    logger_trade.info(f"rest api:use best buy price is: {symbol} money:{order_money}, price:{order_price}, bid:{bids}, {shiftBp}")
+                    logger_trade.info(f"use best buy price is: {symbol} money:{order_money}, price:{order_price}, bid:{bids}, {shiftBp}")
                     # order_price = bid0
                     order_info["order_price"] = order_price
                 trade_price = round(order_price, price_precision_map[symbol])
@@ -334,7 +334,7 @@ def post_orders_in_parallel(clients, orders, logger_trade, logger_error, price_p
                     shiftBp = order_price
                     order_price = min(ask0*(1+shiftBp/10000), asks[round(shiftBp)])
                     # order_price=asks[round(shiftBp)]
-                    logger_trade.info(f"rest api:use best sell price is: {symbol} money:{order_money}, price:{order_price}, ask:{asks}, {shiftBp}")
+                    logger_trade.info(f"use best sell price is: {symbol} money:{order_money}, price:{order_price}, ask:{asks}, {shiftBp}")
                     # order_price = ask0
                     order_info["order_price"] = order_price
                 trade_price = round(order_price, price_precision_map[symbol])
