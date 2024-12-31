@@ -767,7 +767,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
             if target_value > 0:
                 deal_ratio = 1 - real_value / target_value
                 logger_trade.info(f"all Delta money: {real_value}, Target money: {target_value}, Ratio: {deal_ratio}")
-            clearSymbolPos(client, position_value_map, position_amount_map, logger_error)
+            clearSymbolPos(client, position_value_map, position_amount_map, logger_error, moneyLimit=cfg["moneyLimit"])
 
         except Exception as e:
             logger_error.info(str(e))
