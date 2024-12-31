@@ -695,7 +695,8 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
 
                 # Step6: Get orders from algo order module
                 current_tm = get_current_tm()
-                next_tm = tools.tmu2i(int(tools.tmi2u(current_tm) / 5000) * 5000 + 6000)
+                tradeDeltaMs = cfg["trade_delta"]*1000
+                next_tm = tools.tmu2i(int(tools.tmi2u(current_tm) / tradeDeltaMs) * tradeDeltaMs + tradeDeltaMs + 1000)
                 orders = gorder.update_and_gorders(current_tm, position_value_map)
                 logger_trade.info(f"{current_tm} - {next_tm} \n\n gorder_smpairs:{gorder.smpairs}")
                 logger_trade.info(f"{current_tm} - {next_tm} \n\n order details:{orders}")
