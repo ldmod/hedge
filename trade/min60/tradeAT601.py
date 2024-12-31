@@ -273,6 +273,7 @@ def cancel_orders_in_parallel(clients, symbol_set, logger_trade, logger_error):
         while cancel_status and retry_num > 0:
             try:
                 cancel_status = cancel_open_orders(client, key, logger_trade, logger_error)
+                logger_trade.info(f"Cancel order by symbol: {key} cancel_status:{cancel_status}")
             except Exception as e:
                 logger_error.error(f"Error canceling order for {key}: {str(e)}")
             retry_num -= 1
@@ -726,7 +727,8 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
                                                    logger_trade, logger_error)
 
             # Step10: Update algo order module tratio (after trade, once)
-
+            cancel_orders_in_parallel(clients, gorder.smpairs.keys(), logger_trade, logger_error)
+            
             # Step11: Update next signal file index (after trade, once)
             signal_time = datetime.strptime(signal_index, "%Y%m%d%H%M%S")
             signal_time = signal_time + time_delta

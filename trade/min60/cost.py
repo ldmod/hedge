@@ -187,7 +187,7 @@ if __name__ == '__main__':
                     total_delta_cost+=delta_costsum
                     delta_ratio=1-target["delta"].abs().sum()/target["bookw"].abs().sum()
                     logger.info(f"{tools.tmu2i(bookw_tm)} - delta_ratio$: {delta_ratio}")
-                    logger.info(f"delta_costsum$: {delta_costsum}")
+                    logger.info(f"delta_costsum$: {delta_costsum} total_delta_cost: {total_delta_cost}")
                     show=target[((target["bookw"].abs()>50) | (target["money"].abs()>50))]
                     print(f"delta detail:\n{show}", flush=True)
                     
@@ -201,6 +201,7 @@ if __name__ == '__main__':
                     trade_data.rename(columns={'t_tm': 'curtm', 'qty': 'c_q'}, inplace=True)
                     trade_data.sort_values(by="curtm", inplace=True)
                     trade_data["c_m"]=trade_data["price"]*trade_data["c_q"]
+                    old_trade_data = trade_data.copy()
                     trade_data=trade_data[["order_id", "symbol", "c_m", "c_q"]]
                     df_merge=trade_data[["symbol", "c_m", "c_q"]].groupby('symbol').agg("sum")
                     df_merge["c_p"] = df_merge["c_m"]/df_merge["c_q"]
@@ -218,6 +219,8 @@ if __name__ == '__main__':
                     logger.info(f"今日累计交易金额$: {total_bp_money}")
                     logger.info(f"今日累计冲击成本bp: {total_bp_cost / total_bp_money * 10000}")
                     logger.info(f"\ndetail: \n{df_stats}")
+                    old_trade_data.sort_values(by=["symbol", "curtm"], inplace=True)
+                    logger.info(f"\ntrade_data detail: \n{old_trade_data}")
                         
 
                     # 信号步进
