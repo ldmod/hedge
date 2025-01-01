@@ -238,8 +238,8 @@ class GenerateOrders:
             sidx=self.symbolidx[symbol]
             target_money=item[1][0]
             cur_money=item[1][1]
-            if abs(target_money-cur_money)>max(20.0, get_threshold(symbol)):
-            # if abs(target_money-cur_money)> 500 or abs(target_money) < 1:
+            # if abs(target_money-cur_money)>max(20.0, get_threshold(symbol)):
+            if abs(target_money-cur_money)> 500:
                 self.status_dict["t_money"][sidx]=target_money
                 self.status_dict["cur_money"][sidx]=cur_money
                 self.status_dict["b_money"][sidx]=cur_money
