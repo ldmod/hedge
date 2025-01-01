@@ -189,7 +189,7 @@ class GenerateOrders:
                 splitcnt = self.cfg["splitcnt"]
                 if abs(target["target_money"]) < 10:
                     splitcnt+=self.cfg["closeSplitAdd"]
-                adaptive_money=np.sign(total_money)*min(abs(total_money)/splitcnt, abs(left_money))
+                adaptive_money=np.sign(total_money)*min(max(abs(total_money)/splitcnt, get_threshold(sid)), abs(left_money))
                 
             money = adaptive_money
             
