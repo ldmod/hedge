@@ -325,7 +325,7 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
         tvrs.append(tvr)
         mis.append(mi.sum())
         
-        mret=(lret+sret)/money/2*10000-tvr/money*1.5
+        mret=(lret+sret)/money/2*10000-tvr/money*1.0
         mrets.append(mret)
         
         sa_lrets.append(lret-realretmean*money-tvr/money/2)
@@ -389,18 +389,18 @@ if __name__ == "__main__":
     
     ban_symbols=dr["ban_symbols_at"]
     
-    path="/home/nb/v1/cryptoqt/smlp/model_states/infmodel/nsmlpv230/res"
+    path="/home/nb/v1/cryptoqt/smlp/model_states/infmodel/tsmlpv230_7/res"
 
     aa=run_alpha(int(conts.h1mincnt/2), partial(min15_alpha.readcsv_v2avg,
             path=path, fields=["pred2"]),
             path=path,
             tsf=None,endflag=True, 
-            delaymin=2,
+            delaymin=5,
             alphaavg=alphaavg,
             # calcw=calcw,
             # calcw=partial(calcwtopk, cnt=5), 
-            calcw=partial(calcwtopkliqV3, ratio_limit=50, scale=3, money_limit=1000000, 
-                          top_limit=20, min_delta=1000), 
+            calcw=partial(calcwtopkliqV3, ratio_limit=30, scale=3, money_limit=1000000, 
+                          top_limit=10, min_delta=1000), 
             # ban_symbols=ban_symbols,
             # ban_hours=dr["ban_hours_less"],
               start=args.start_date, end=args.end_date, 

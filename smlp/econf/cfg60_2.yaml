@@ -1,12 +1,14 @@
 name: "smlp"
 modelpath : "../model_states/infmodel/"
-modelname : "nsmlpv260_2"
+modelname : "nsmlpv260_4"
 logpath : "./logs"
-logname : "nsmlpv260_2.log"
+logname : "nsmlpv260_4.log"
+seed: 49574
+  #seed: 49575
 # onlyread : True
 tmdelta : 60
 reduce : 60
-daily_trade_money : 5000000
+daily_trade_money : 50000000
 longterm : 1
 longtermTarget : False
 insperday : 24
@@ -62,8 +64,6 @@ usemoneyfea : 0
 feaqlist :
     seqm_768_ldTrue_sn5 : {type: seqm, seed : 49575, writeflag: False, readflag: False}
 
-# seed: 49576
-seed: 49575
 eps : 0.000001
 crosssize : 256
 sbeta : 15.0

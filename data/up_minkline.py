@@ -136,6 +136,8 @@ def retry_fetch_ohlcv(savename, max_retries, symbol, timeframe, startTime, endTi
                 raise  # Exception('Failed to fetch', timeframe, symbol, 'OHLCV in', max_retries, 'attempts')
                 
 def retry_fetch_ohlcv_h5fs(savename, max_retries, symbol, timeframe, startTime, endTime, cidx):
+    if symbol in g_cfg["banSymbols"]:
+        return None
     if savename[0]=='s':
         h5fs = g_data["h5fsS"][symbol]
     else:
@@ -175,8 +177,9 @@ def updatevalue(frequency, start_tm, end_tm, h5f, savename, off, sid):
     succnt=1
     symbolidx=g_data["sids"].tolist().index(sid)
     target_items=retry_fetch_ohlcv_h5fs(savename, 100, sid, frequency, start_tm, end_tm, cidx)
-    for idx,key in enumerate(kline_fields):
-        h5f[savename+"_"+key][:, symbolidx]=target_items[key].values
+    if not target_items is None:
+        for idx,key in enumerate(kline_fields):
+            h5f[savename+"_"+key][:, symbolidx]=target_items[key].values
     
     print("end update", savename, frequency, sid, tools.tmu2i(start_tm), tools.tmu2i(end_tm), succnt, flush=True)
     return succnt

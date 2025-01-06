@@ -197,6 +197,7 @@ if __name__ == '__main__':
                               
                     trade_data=tools.open_csv_copy(cfg["trade_info_path"]+"_"+str(cur_day)+".h5")['data']
                     trade_data = trade_data[(trade_data["t_tm"] >= tools.tmu2i(s_tm+10000)) & (trade_data["t_tm"] < tools.tmu2i(e_tm+10000))]
+                    trade_data = trade_data[trade_data["price"]>0]
                     trade_data['qty']=trade_data['qty']*(trade_data['buyer'].astype(int)*2-1).astype(float)
                     trade_data.rename(columns={'t_tm': 'curtm', 'qty': 'c_q'}, inplace=True)
                     trade_data.sort_values(by="curtm", inplace=True)

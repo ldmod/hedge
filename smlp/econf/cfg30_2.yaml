@@ -2,11 +2,12 @@ name: "smlp"
 modelpath : "../model_states/infmodel/"
 modelname : "tsmlpv230_2"
 logpath : "./logs"
-logname : "smlpv230_2.log"
+logname : "nsmlpv230_2.log"
+seed: 49572
 # onlyread : True
 tmdelta : 30
 reduce : 30
-daily_trade_money : 5000000
+daily_trade_money : 50000000
 longterm : 1
 longtermTarget : False
 insperday : 48
@@ -17,7 +18,7 @@ savepred : True
 outvalue : ["rank", "rank1", "rank2", "rank3"]
 startdti : 288000
 targetmin1idx : 210
-savedelta : 2880
+savedelta : 28800
 traindays : []
 sampleinsnum : 1
 dumpres : False
@@ -62,8 +63,6 @@ usemoneyfea : 0
 feaqlist :
     seqm_768_ldTrue_sn5 : {type: seqm, seed : 49575, writeflag: False, readflag: False}
 
-# seed: 49576
-seed: 49575
 eps : 0.000001
 crosssize : 256
 sbeta : 15.0
@@ -187,7 +186,7 @@ seqsimilityloss : False
 seqmse : False
 ynorm : True
 
-delaymin : 2
+delaymin : 5
 unoinmodel : False
 seqmergex : False
 encodersize : 512

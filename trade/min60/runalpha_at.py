@@ -334,8 +334,8 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
     stats["ic"]=df.groupby("day").mean()["ic"]
     
     xsdate = [datetime.datetime.strptime(str(d), '%Y%m%d').date() for d in days]
-    plt.plot(xsdate, np.cumsum(sa_lrets),color='r')
-    plt.plot(xsdate, np.cumsum(sa_srets),color='b')
+    plt.plot(xsdate, np.cumsum(sa_lrets),color='r', linewidth=1)
+    plt.plot(xsdate, np.cumsum(sa_srets),color='b', linewidth=1)
     plt.plot(xsdate, np.cumsum(mrets),color='y')
     plt.tick_params(axis='both',which='both',labelsize=10)
     plt.gcf().autofmt_xdate()  # 自动旋转日期标记
@@ -403,7 +403,7 @@ if __name__ == "__main__":
             fields=["pred2"]),
             path=path,
             tsf=None,endflag=True, 
-            delaymin=2,
+            delaymin=5,
             aftermin = 0,
             alphaavg=alphaavg2,
             singalDelayMin = singalDelayMin,
