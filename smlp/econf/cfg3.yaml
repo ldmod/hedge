@@ -1,13 +1,13 @@
 name: "smlp"
 modelpath : "../model_states/infmodel/"
-modelname : "tsmlpv25"
+modelname : "tsmlpv23"
 logpath : "./logs"
-logname : "smlpv25.log"
+logname : "smlpv23.log"
 # onlyread : True
 tmdelta : 30
 reduce : 30
 daily_trade_money : 10
-retterm : 0.1666
+retterm : 0.1
 longterm : 1
 longtermTarget : False
 insperday : 48
@@ -188,7 +188,7 @@ seqsimilityloss : False
 seqmse : False
 ynorm : True
 
-delaymin : 5
+delaymin : 1
 unoinmodel : False
 seqmergex : False
 encodersize : 512

@@ -1,16 +1,15 @@
 name: "smlp"
 modelpath : "../model_states/infmodel/"
-modelname : "tsmlpv25"
+modelname : "nsmlpv2480"
 logpath : "./logs"
-logname : "smlpv25.log"
+logname : "nsmlpv2480.log"
 # onlyread : True
-tmdelta : 30
-reduce : 30
-daily_trade_money : 10
-retterm : 0.1666
+tmdelta : 480
+reduce : 480
+daily_trade_money : 5000000
 longterm : 1
 longtermTarget : False
-insperday : 48
+insperday : 3
 tvrdeltas : 1
 traindelay : 2
 realtime : 0
@@ -18,7 +17,7 @@ savepred : True
 outvalue : ["rank", "rank1", "rank2", "rank3"]
 startdti : 288000
 targetmin1idx : 210
-savedelta : 28800
+savedelta : 14400
 traindays : []
 sampleinsnum : 1
 dumpres : False
@@ -188,7 +187,7 @@ seqsimilityloss : False
 seqmse : False
 ynorm : True
 
-delaymin : 5
+delaymin : 2
 unoinmodel : False
 seqmergex : False
 encodersize : 512

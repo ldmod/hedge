@@ -216,6 +216,23 @@ def getx(dr, min1i):
         std=np.nanstd(data, axis=1)
         data=(data-mean)/std
         fea.append(data)
+    if "marketFea" in gv and gv["marketFea"]:                                                                                                                                         
+        min5return=np.clip((dr["min1info_15vwap"][min1i-1]/dr["min1info_15vwap"][min1i-6]-1.0)*100, -10, 10) 
+        min15return=np.clip((dr["min1info_15vwap"][min1i-1]/dr["min1info_15vwap"][min1i-16]-1.0)*100, -10, 10) 
+        min60return=np.clip((dr["min1info_15vwap"][min1i-1]/dr["min1info_15vwap"][min1i-61]-1.0)*100, -10, 10) 
+        min120return=np.clip((dr["min1info_15vwap"][min1i-1]/dr["min1info_15vwap"][min1i-121]-1.0)*100, -10, 10) 
+        min480return=np.clip((dr["min1info_15vwap"][min1i-1]/dr["min1info_15vwap"][min1i-481]-1.0)*100, -10, 10) 
+        min1440return=np.clip((dr["min1info_15vwap"][min1i-1]/dr["min1info_15vwap"][min1i-1441]-1.0)*100, -10, 10) 
+        main_symbols=["BTCUSDT", "ETHUSDT"]
+        sidxs=[gv["data_dict"]["sidmap"][sid] for sid in main_symbols]
+        market_fea=[min5return[sidxs], min15return[sidxs], min60return[sidxs], min120return[sidxs], min480return[sidxs], min1440return[sidxs]]
+        market_fea=np.hstack(market_fea) #3*6
+        market_fea=np.repeat(market_fea.reshape(1,-1), gv["data_dict"]["sids"].shape[0], axis=0)
+        market_fea[~np.isfinite(market_fea)]=0
+        market_fea=market_fea.transpose()
+        fea.append(market_fea)
+    
+
     feas=np.vstack(fea).transpose()
     return feas
 

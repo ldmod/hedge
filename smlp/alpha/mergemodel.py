@@ -158,7 +158,8 @@ class MLPmodel(seqfea.FeatureModel):
         super(MLPmodel, self).__init__()
         self.name="mergemodel"
         inputsize=0
-        oriinput=19
+        self.marketFea = gv["marketFea"] if "marketFea" in gv else 0
+        oriinput=19 + self.marketFea*12
         # oriinput=1
         self.daym=seqfea.DayModel(crosssize=16, mseqlen=8)
         self.dayembedlen=128
@@ -184,7 +185,7 @@ class MLPmodel(seqfea.FeatureModel):
         cssize1=512
         cssize2=256
         self.css1 = CssModel(inputsize, cssize1, bnlen=1, dropout=gv["dropout"])
-        self.css2 = CssModel(cssize1, cssize1, bnlen=1, dropout=gv["dropout"])
+        self.css2 = CssModel(cssize1 + self.marketFea*cssize1, cssize1, bnlen=1, dropout=gv["dropout"])
         self.css3 = CssModel(cssize1, cssize2, bnlen=1, dropout=gv["dropout"])
         self.secms=nn.ModuleList()
         for key in gv["outvalue"]:
@@ -248,6 +249,8 @@ class MLPmodel(seqfea.FeatureModel):
                 inputs.append(torch.from_numpy(hid).cuda()[valid])
         inp=torch.cat(inputs, dim=1)
         inp=self.css1(inp)
+        if self.marketFea:
+            inp=torch.cat([inp, inp[0:1].repeat([inp.shape[0], 1])], dim=1)
         inp=self.css2(inp)
         inp=self.css3(inp)
         hidden=torch.zeros((valid.shape[0], inp.shape[1])).cuda()

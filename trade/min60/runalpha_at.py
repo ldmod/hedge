@@ -362,26 +362,26 @@ def readcsv_v2avg(dr, min1i, path="/home/crypto/smlpv2/cryptoqt/smlp/model_state
     for field in fields:
         alpha+=tools.npnorm(df[field].to_numpy())
     alphamin1rank=None
-    # fnamemin1=pathmin1+"/"+str(dr["min1info_tm"][min1i])+"_pred.csv"
-    # dfmin1=pd.read_csv(fnamemin1)
-    # alphamin1=np.zeros(df["pred0"].shape)
-    # for field in fields:
-    #     alphamin1+=tools.npnorm(dfmin1[field].to_numpy())
-    # nanflag=~np.isfinite(alphamin1)
-    # alphamin1[nanflag]=0
-    # alphamin1rank = rankdata(alphamin1)
-    # alphamin1rank = alphamin1rank/alphamin1.shape[0]*2-1.0
-    # alphamin1rank[nanflag]=0
-    # scipy.stats.pearsonr(alphamin1, alphamin1rank)
+    fnamemin1=pathmin1+"/"+str(dr["min1info_tm"][min1i])+"_pred.csv"
+    dfmin1=pd.read_csv(fnamemin1)
+    alphamin1=np.zeros(df["pred0"].shape)
+    for field in fields:
+        alphamin1+=tools.npnorm(dfmin1[field].to_numpy())
+    nanflag=~np.isfinite(alphamin1)
+    alphamin1[nanflag]=0
+    alphamin1rank = rankdata(alphamin1)
+    alphamin1rank = alphamin1rank/alphamin1.shape[0]*2-1.0
+    alphamin1rank[nanflag]=0
+    scipy.stats.pearsonr(alphamin1, alphamin1rank)
     return alpha, alphamin1rank
  
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test for argparse', formatter_class=argparse.RawTextHelpFormatter)
-    # parser.add_argument('--start_date', help='start_date', default=20231001000000, type=int)
+    parser.add_argument('--start_date', help='start_date', default=20231001000000, type=int)
     # parser.add_argument('--start_date', help='start_date', default=20240101000000, type=int)
-    parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
-    # parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)
-    parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
+    #parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
+    parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)
+    #parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
     args = parser.parse_args()
     dm.init()
     dr=dm.dr
@@ -394,7 +394,7 @@ if __name__ == "__main__":
     
     # path="/home/nb/v1/cryptoqt/smlp/model_states/infmodel/nsmlpv260_2/res"
     # singalDelayMin = 30
-    pathmin1 = "/home/nb/v1/cryptoqt/smlp/model_states/infmodel/tsmlpv21/res"
+    pathmin1 = "/home/nb/v1/cryptoqt/smlp/model_states/infmodel/tsmlpv25/res"
     #p1 20-10-1-1-0.2
     #p2 50-20-1-0-0.1
     aa=run_alpha(int(conts.h1mincnt/1), partial(readcsv_v2avg,
@@ -404,7 +404,7 @@ if __name__ == "__main__":
             path=path,
             tsf=None,endflag=True, 
             delaymin=5,
-            aftermin = 0,
+            aftermin = 5,
             alphaavg=alphaavg2,
             singalDelayMin = singalDelayMin,
             # calcw=calcw,
@@ -414,7 +414,7 @@ if __name__ == "__main__":
             # ban_symbols=ban_symbols,
             # ban_hours=dr["ban_hours_less"],
               start=args.start_date, end=args.end_date, 
-              money=10000, tratio=0.1, lb_ratio=0.0)
+              money=50000, tratio=0.2, lb_ratio=0.0)
     # print("\nsummary:", args.start_date, "~", args.end_date, "sum ret:", aa["ret"].sum())
     
     stats=aa.groupby("month").mean()
