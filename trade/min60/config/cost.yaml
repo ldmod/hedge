@@ -1,14 +1,14 @@
 
-signal_path : "/home/nb/signal/predv260_1w"
+signal_path : "/home/nb/signal/predv260_3w_01"
 trade_info_path : "./data/account"
 pos_info_path : "./data/pos"
 acc_info_path : "./data/accvalue"
 save_order_info_path : "./data/order_info"
 min_delta : 60
 minute_list : [5]
-lookback_mins : 5
+lookback_mins : 1
 trade_min : 10
-posRatio : 6.0
+posRatio : 0.2
 log_path : "./logs/costinfo.log"
 
 um_client:

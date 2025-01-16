@@ -626,7 +626,7 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
                         key = row["sid"]
                         value = round(float(row["bookw"]) * cfg["signal"]["money_scale"], 2)
                         alpha_map[key] = value
-                        pred_alpha_map[key]=float(row["alpha"])
+                        pred_alpha_map[key]=float(row["alphamin1"])
                     break
                 except Exception as e:
                     logger_error.info(str(e))

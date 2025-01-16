@@ -131,18 +131,18 @@ class WdMinKline():
         def on_message_wrapper(_, message):
             try:
                 self.queue.put(message)
-                # if random.random() < g_log_ratio:
-                #     msg = json.loads(message)
-                #     if "result" in msg and msg["result"] is None and "id" in msg:
-                #         return
-                #     if 'stream' not in msg or 'data' not in msg:
-                #         return
-                #     stream = msg['stream']
-                #     data = msg['data']
-                #     symbol=data['s']
-                #     tm=int(data["T"])
-                #     current_time_ms = int(time.time() * 1000)
-                #     print(f"Network Cost {symbol}-{self.queue.qsize()}: {current_time_ms - tm} ms", flush=True)
+                if random.random() < g_log_ratio:
+                    msg = json.loads(message)
+                    if "result" in msg and msg["result"] is None and "id" in msg:
+                        return
+                    if 'stream' not in msg or 'data' not in msg:
+                        return
+                    stream = msg['stream']
+                    data = msg['data']
+                    symbol=data['s']
+                    tm=int(data['k']["T"])
+                    current_time_ms = int(time.time() * 1000)
+                    print(f"Network Cost {symbol}-{self.queue.qsize()}: {current_time_ms - tm} ms", flush=True)
 
             except Exception as e:
                 print(f"Error in message_handler: {str(e)}", flush=True)
@@ -213,7 +213,7 @@ class WdMinKline():
                     current_time_ms = int(time.time() * 1000)
                     print(f"queue item none: {tools.tmu2i(current_time_ms)} qsize:{self.queue.qsize()} connect:{client.socket_manager.ws.connected} noneCnt:{noneCnt}", 
                           flush=True)
-                if noneCnt > 100*60:  #60s no data. start reconnect
+                if noneCnt > 100*120:  #60s no data. start reconnect
                     print(f"noneCnt exceed {symbol}: {tools.tmu2i(current_time_ms)} connect:{client.socket_manager.ws.connected} noneCnt:{noneCnt}", 
                           flush=True)
                     break

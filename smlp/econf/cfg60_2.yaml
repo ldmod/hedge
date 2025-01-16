@@ -1,14 +1,15 @@
 name: "smlp"
 modelpath : "../model_states/infmodel/"
-modelname : "nsmlpv260_4"
+modelname : "tsmlpv260_3"
 logpath : "./logs"
-logname : "nsmlpv260_4.log"
-seed: 49574
-  #seed: 49575
+logname : "smlpv260_3.log"
+seed: 49573
+marketFea : 1
 # onlyread : True
 tmdelta : 60
 reduce : 60
-daily_trade_money : 50000000
+daily_trade_money : 20000000
+retterm : 1
 longterm : 1
 longtermTarget : False
 insperday : 24
@@ -19,7 +20,7 @@ savepred : True
 outvalue : ["rank", "rank1", "rank2", "rank3"]
 startdti : 288000
 targetmin1idx : 210
-savedelta : 14400
+savedelta : 28800
 traindays : []
 sampleinsnum : 1
 dumpres : False
@@ -64,6 +65,7 @@ usemoneyfea : 0
 feaqlist :
     seqm_768_ldTrue_sn5 : {type: seqm, seed : 49575, writeflag: False, readflag: False}
 
+# seed: 49576
 eps : 0.000001
 crosssize : 256
 sbeta : 15.0

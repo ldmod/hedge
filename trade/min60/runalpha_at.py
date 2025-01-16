@@ -379,9 +379,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test for argparse', formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('--start_date', help='start_date', default=20231001000000, type=int)
     # parser.add_argument('--start_date', help='start_date', default=20240101000000, type=int)
-    #parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
-    parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)
-    #parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
+    # parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
+    # parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)
+    parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
     args = parser.parse_args()
     dm.init()
     dr=dm.dr
@@ -404,17 +404,17 @@ if __name__ == "__main__":
             path=path,
             tsf=None,endflag=True, 
             delaymin=5,
-            aftermin = 5,
+            aftermin = 0,
             alphaavg=alphaavg2,
             singalDelayMin = singalDelayMin,
             # calcw=calcw,
             # calcw=partial(calcwtopk, cnt=10), 
-            calcw=partial(calcwtopkliqV3, ratio_limit=50, scale=3, money_limit=1000000, 
+            calcw=partial(calcwtopkliqV3, ratio_limit=50, scale=2, money_limit=10000000, 
                           top_limit=20, min_delta=1000), 
-            # ban_symbols=ban_symbols,
+            ban_symbols=ban_symbols,
             # ban_hours=dr["ban_hours_less"],
               start=args.start_date, end=args.end_date, 
-              money=50000, tratio=0.2, lb_ratio=0.0)
+              money=30000, tratio=0.1, lb_ratio=0.0)
     # print("\nsummary:", args.start_date, "~", args.end_date, "sum ret:", aa["ret"].sum())
     
     stats=aa.groupby("month").mean()

@@ -124,7 +124,7 @@ if __name__ == '__main__':
     current_time = datetime.now()
     start_of_day = current_time.replace(hour=0, minute=0, second=0, microsecond=0)
     current_index = int(start_of_day.strftime("%Y%m%d%H%M%S"))
-    # current_index=20241003180000
+    # current_index=20250107000000
     last_sec = 0
     while True:
         time.sleep(1)

@@ -207,6 +207,7 @@ class MLPmodel(seqfea.FeatureModel):
         return x.detach(), vf.detach(), hidden.detach()
     
     def forward(self, tidx, return_y=False):
+        self.marketFea = gv["marketFea"] if "marketFea" in gv else 0
         valid=d2i.getvalid(gv["savedr"], tidx)
         valid=torch.from_numpy(valid).cuda()
         sidembed=self.sidembed(torch.arange(valid.shape[0]).cuda().long())*(not gv["delmergesid"])

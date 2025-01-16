@@ -1,20 +1,20 @@
 name: "smlp"
 modelpath : "../model_states/infmodel/"
-modelname : "tsmlpv215_2"
+modelname : "tsmlpv215_3"
 logpath : "./logs"
-logname : "smlpv215_2.log"
-seed: 49572
+logname : "smlpv215_3.log"
+seed: 49573
 marketFea : 1
 # onlyread : True
 tmdelta : 15
 reduce : 15
 daily_trade_money : 100
 retterm : 1
-longterm : 3
+longterm : 1
 longtermTarget : False
 insperday : 96
 tvrdeltas : 1
-traindelay : 4
+traindelay : 2
 realtime : 0
 savepred : True
 outvalue : ["rank", "rank1", "rank2", "rank3"]

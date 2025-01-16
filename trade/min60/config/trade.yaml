@@ -1,8 +1,8 @@
 signal:
   base_path: '/home/nb/signal/'
   # base_path: '/home/ubuntu/signal/'
-  pred_dir: 'predv260_1w'
-  money_scale : 1.2
+  pred_dir: 'predv260_3w_01'
+  money_scale : 1.0
 
 
 moneyLimit : 100

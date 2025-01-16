@@ -31,6 +31,7 @@ import cryptoqt.data.tools as tools
 import cryptoqt.data.datammap as dmap
 import argparse
 from scipy.stats import rankdata
+import scipy.stats
 daymincnt=conts.daymincnt
 h4mincnt=conts.h4mincnt
 h1mincnt=conts.h1mincnt
@@ -204,6 +205,8 @@ def alphaavg2(alphas):
 def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=20241221203000, 
               money=30000, tratio=0.1, alphaavg=alphaavg, delaymin=5, endflag=False,
               ban_hours=[],
+              aftermin=1,
+              singalDelayMin = 0,
               calcw=calcwtopkliqnew, ban_symbols=[], lb_ratio=0.0,
               path="/home/crypto/cryptoqt/smlp/model_states/infmodel/tsmlp15/res"):
 
@@ -223,7 +226,7 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
     mis, miics=[], []
     # dtrades=loadtradeinfo(dr)
     alphas=deque(maxlen=100)
-    for min1i in range(start, end, delta):
+    for min1i in range(start+singalDelayMin, end, delta):
         tm=dr["min1info_tm"][min1i]
         if tm == 20241029000000:
             a=0
@@ -239,7 +242,7 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
             lasteddownload=dmap.gettmsize()
             continue
         
-        alpha=alphafunc(dr, min1i)
+        alpha, alphamin1=alphafunc(dr, min1i)
         alpha[ban_flag.astype(bool)]=np.nan
         alphas.append(alpha)
         if len(alphas)>6:
@@ -250,6 +253,11 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
             bookw=bookw*(1-lb_ratio)+lastbookw*lb_ratio
         endp=np.nanmean(dr["min1info_vwap"][min1i+delta:min1i+delta+delaymin], axis=0)
         startp=np.nanmean(dr["min1info_vwap"][min1i:min1i+delaymin], axis=0)
+        if not alphamin1 is None:
+            startp_aftermin=np.nanmean(dr["min1info_vwap"][min1i+aftermin:min1i+aftermin+delaymin], axis=0)
+            longAfterFlag = (long & (alphamin1 < -0.1)) 
+            shortAfterFlag = (short & (alphamin1 > 0.1))
+            startp[longAfterFlag | shortAfterFlag] = startp_aftermin[longAfterFlag | shortAfterFlag]
         realret=(endp/startp-1.0)
         #排除掉异常值(NaN等)
         valid=np.isfinite(alpha)&np.isfinite(realret)
@@ -264,41 +272,10 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
         lret=ret[long].sum()
         sret=ret[short].sum()
 
-        if (not lastbookw is None) and (not tsf is None):
-            trademoney=bookw-lastbookw
-            tradesignal=tsf(dr, min1i)
-            tsfarg=np.zeros(tradesignal.shape)
-            tmpv=tradesignal[np.isfinite(tradesignal)]
-            tmpv=tmpv.argsort().argsort()/tmpv.shape[0]
-            tsfarg[np.isfinite(tradesignal)]=tmpv
-            
-            tvalid=np.isfinite(tradesignal)&(np.abs(trademoney)>0.0001)
-            targetmin=5
-            retmi=dr["min1info_vwap"][min1i+targetmin]/dr["min1info_vwap"][min1i]-1.0
-            tradetmidx=np.zeros(tradesignal.shape)
-
-            lf=trademoney[tvalid]>0
-            sf=trademoney[tvalid]<0
-            tmpv=np.zeros(trademoney[tvalid].shape)
-            tmpv[lf]=((4-tsfarg[tvalid]*5).astype(int)[lf])
-            tmpv[sf]=(tsfarg[tvalid]*5).astype(int)[sf]
-            tradetmidx[tvalid]=tmpv
-            tradetmidx[~tvalid]=0
-            # tradetmidx[:]=1
-            tradetmidx=tradetmidx.astype(int)
-            mi=(dr["min1info_vwap"][min1i:min1i+targetmin][(tradetmidx, np.arange(tradetmidx.shape[0]))]/startp-1.0)*trademoney
-            mi[~np.isfinite(mi)]=0
-            tsv=np.isfinite(tradesignal)&np.isfinite(retmi)
-            miic=np.corrcoef(tradesignal[tsv], retmi[tsv])[0,1]
-        else:
-            mi=np.zeros(bookw.shape)
-            miic=0
-
         df=pd.DataFrame()
         df["sid"]=dr["uid"]
         df["bookw"]=bookw
         df["ret"]=ret
-        df["mi"]=mi
         df["long"]=long
         df["short"]=short
         df["bprice"]=np.nanmean(dr["min1info_vwap"][min1i:min1i+delaymin], axis=0)
@@ -323,9 +300,8 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
         lrets.append(lret)
         srets.append(sret)
         tvrs.append(tvr)
-        mis.append(mi.sum())
         
-        mret=(lret+sret)/money/2*10000-tvr/money*1.0
+        mret=(lret+sret)/money/2*10000-tvr/money*1.5
         mrets.append(mret)
         
         sa_lrets.append(lret-realretmean*money-tvr/money/2)
@@ -336,7 +312,6 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
         #alpha和realret的相关性
         ic=np.corrcoef(alpha[valid], realret[valid])[0,1]
         ics.append(ic)
-        miics.append(miic)
         realmeanrets.append(realretmean)
 
     #打印结果构建
@@ -344,8 +319,6 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
     df["ic"]=np.array(ics)
     scale=money/10000.0
     df["ret"]=(np.array(lrets)+np.array(srets))/scale/2
-    df["mi"]=np.array(mis)/scale/2
-    df["miic"]=np.array(miics)
     df["lret"]=np.array(lrets)/scale/2
     df["sret"]=np.array(srets)/scale/2
     df["tvr"]=np.array(tvrs)/scale/2
@@ -361,8 +334,8 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
     stats["ic"]=df.groupby("day").mean()["ic"]
     
     xsdate = [datetime.datetime.strptime(str(d), '%Y%m%d').date() for d in days]
-    plt.plot(xsdate, np.cumsum(sa_lrets),color='r')
-    plt.plot(xsdate, np.cumsum(sa_srets),color='b')
+    plt.plot(xsdate, np.cumsum(sa_lrets),color='r', linewidth=1)
+    plt.plot(xsdate, np.cumsum(sa_srets),color='b', linewidth=1)
     plt.plot(xsdate, np.cumsum(mrets),color='y')
     plt.tick_params(axis='both',which='both',labelsize=10)
     plt.gcf().autofmt_xdate()  # 自动旋转日期标记
@@ -375,10 +348,37 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
     print(stats)
     
     return df
+
+def readcsv_v2avg(dr, min1i, path="/home/crypto/smlpv2/cryptoqt/smlp/model_states/infmodel/tsmlpv215/res",
+                  pathmin1="/home/crypto/smlpv2/cryptoqt/smlp/model_states/infmodel/tsmlpv215/res",
+                  fields = ["pred0", "pred1", "pred2"]):
+    di=int(min1i/conts.daymincnt)
+    h4i=int(min1i/conts.h4mincnt)
+    h1i=int(min1i/conts.h1mincnt)
+    min15i=int(min1i/conts.min15mincnt) 
+    fname=path+"/"+str(dr["min1info_tm"][min1i])+"_pred.csv"
+    df=pd.read_csv(fname)
+    alpha=np.zeros(df["pred0"].shape)
+    for field in fields:
+        alpha+=tools.npnorm(df[field].to_numpy())
+    alphamin1rank=None
+    fnamemin1=pathmin1+"/"+str(dr["min1info_tm"][min1i])+"_pred.csv"
+    dfmin1=pd.read_csv(fnamemin1)
+    alphamin1=np.zeros(df["pred0"].shape)
+    for field in fields:
+        alphamin1+=tools.npnorm(dfmin1[field].to_numpy())
+    nanflag=~np.isfinite(alphamin1)
+    alphamin1[nanflag]=0
+    alphamin1rank = rankdata(alphamin1)
+    alphamin1rank = alphamin1rank/alphamin1.shape[0]*2-1.0
+    alphamin1rank[nanflag]=0
+    scipy.stats.pearsonr(alphamin1, alphamin1rank)
+    return alpha, alphamin1rank
  
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test for argparse', formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('--start_date', help='start_date', default=20240101000000, type=int)
+    parser.add_argument('--start_date', help='start_date', default=20231001000000, type=int)
+    # parser.add_argument('--start_date', help='start_date', default=20240101000000, type=int)
     # parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
     parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)
     # parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
@@ -389,22 +389,32 @@ if __name__ == "__main__":
     
     ban_symbols=dr["ban_symbols_at"]
     
-    path="/home/nb/v1/cryptoqt/smlp/model_states/infmodel/tsmlpv230_2/res"
-
-    aa=run_alpha(int(conts.h1mincnt/2), partial(min15_alpha.readcsv_v2avg,
-            path=path, fields=["pred2"]),
+    path="/home/nb/v1/cryptoqt/smlp/model_states/infmodel/tsmlpv230_1/res"
+    singalDelayMin = 0
+    
+    # path="/home/nb/v1/cryptoqt/smlp/model_states/infmodel/nsmlpv260_2/res"
+    # singalDelayMin = 30
+    pathmin1 = "/home/nb/v1/cryptoqt/smlp/model_states/infmodel/tsmlpv25/res"
+    #p1 20-10-1-1-0.2
+    #p2 50-20-1-0-0.1
+    aa=run_alpha(int(conts.h1mincnt/2), partial(readcsv_v2avg,
+            path=path, 
+            pathmin1=pathmin1,
+            fields=["pred2"]),
             path=path,
             tsf=None,endflag=True, 
             delaymin=5,
+            aftermin = 0,
             alphaavg=alphaavg2,
+            singalDelayMin = singalDelayMin,
             # calcw=calcw,
-            # calcw=partial(calcwtopk, cnt=5), 
-            calcw=partial(calcwtopkliqV3, ratio_limit=30, scale=3, money_limit=10000000, 
-                          top_limit=10, min_delta=1000), 
+            # calcw=partial(calcwtopk, cnt=10), 
+            calcw=partial(calcwtopkliqV3, ratio_limit=50, scale=2, money_limit=10000000, 
+                          top_limit=20, min_delta=1000), 
             # ban_symbols=ban_symbols,
             # ban_hours=dr["ban_hours_less"],
               start=args.start_date, end=args.end_date, 
-              money=50000, tratio=0.3, lb_ratio=0.0)
+              money=10000, tratio=0.1, lb_ratio=0.0)
     # print("\nsummary:", args.start_date, "~", args.end_date, "sum ret:", aa["ret"].sum())
     
     stats=aa.groupby("month").mean()
