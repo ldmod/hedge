@@ -267,8 +267,18 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
 
         #求收益均值(nanmean是mean的增强型,忽略NaN)
         realretmean=np.nanmean(realret[valid]) if valid.sum()>0 else 0
+        #stopLoss
+        stopLossLimit = 0.0125
+        maxprice=np.max(dr["min1info_high"][min1i+delaymin:min1i+delta], axis=0)
+        minPrice=np.min(dr["min1info_low"][min1i+delaymin:min1i+delta], axis=0)
+        stopLongLossFlag = long & ((minPrice/startp-1.0) < -stopLossLimit)
+        stopShortLossFlag = short & ((maxprice/startp-1.0) > stopLossLimit)
+        realret[stopLongLossFlag]=-stopLossLimit
+        realret[stopShortLossFlag]=stopLossLimit
+        
         #收益X权重
         ret=bookw*realret
+        
         lret=ret[long].sum()
         sret=ret[short].sum()
 
@@ -334,8 +344,8 @@ def run_alpha(delta, alphafunc, tsf=None, start=20231030000000, end=202412212030
     stats["ic"]=df.groupby("day").mean()["ic"]
     
     xsdate = [datetime.datetime.strptime(str(d), '%Y%m%d').date() for d in days]
-    plt.plot(xsdate, np.cumsum(sa_lrets),color='r', linewidth=1)
-    plt.plot(xsdate, np.cumsum(sa_srets),color='b', linewidth=1)
+    # plt.plot(xsdate, np.cumsum(sa_lrets),color='r', linewidth=1)
+    # plt.plot(xsdate, np.cumsum(sa_srets),color='b', linewidth=1)
     plt.plot(xsdate, np.cumsum(mrets),color='y')
     plt.tick_params(axis='both',which='both',labelsize=10)
     plt.gcf().autofmt_xdate()  # 自动旋转日期标记
@@ -377,9 +387,9 @@ def readcsv_v2avg(dr, min1i, path="/home/crypto/smlpv2/cryptoqt/smlp/model_state
  
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test for argparse', formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('--start_date', help='start_date', default=20231001000000, type=int)
+    # parser.add_argument('--start_date', help='start_date', default=20231001000000, type=int)
     # parser.add_argument('--start_date', help='start_date', default=20240101000000, type=int)
-    # parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
+    parser.add_argument('--start_date', help='start_date', default=20240831000000, type=int)
     # parser.add_argument('--end_date', help='end_date', default=20241030000000, type=int)
     parser.add_argument('--end_date',  help='end_date', default=20250815120000, type=int)
     args = parser.parse_args()
@@ -403,7 +413,7 @@ if __name__ == "__main__":
             fields=["pred2"]),
             path=path,
             tsf=None,endflag=True, 
-            delaymin=5,
+            delaymin=1,
             aftermin = 0,
             alphaavg=alphaavg2,
             singalDelayMin = singalDelayMin,

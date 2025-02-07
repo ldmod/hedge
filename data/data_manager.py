@@ -101,6 +101,13 @@ def init():
     # secdata=sk.SecondData(g_cfg["sec_data_path"], ud.g_data["sids"])
     # secdr=secdata.secdr
     ####### read base data ###############
+
+def trancate_data(limitCnt):
+    for key in dr.keys():
+        data=dr[key]
+        if len(data.shape) == 2 and data.shape[1] == dr["sids"].shape[0]:
+            dr[key]=data[:,:limitCnt]
+    dr["sids"]=dr["sids"][:limitCnt]
     
 def init_less():
     global secdata, secdr

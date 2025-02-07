@@ -5,8 +5,11 @@ Created on Sat Jun  1 19:45:46 2024
 
 @author: prod
 """
-
+kline_fields=['opentm', 'open', 'high', 'low', 'close','volume','closetm', 'money', 'tnum', 'tbv', 'tbm', 'ignore']  
 #!/usr/bin/env python
+import sys
+import os
+sys.path.append(os.path.abspath(__file__+"../../../"))
 import logging
 from binance.um_futures import UMFutures
 from binance.lib.utils import config_logging
@@ -21,7 +24,7 @@ def loadcfg(path):
     with open(path) as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
     return cfg
-cfg = loadcfg("cfg.yaml")
+# cfg = loadcfg("cfg.yaml")
 # os.environ["http_proxy"] = "socks5://127.0.0.1:7891"
 # os.environ["https_proxy"] = "socks5h://127.0.0.1:7891"
 myproxies = {
@@ -35,7 +38,7 @@ um_futures_client = UMFutures(proxies=myproxies, timeout=timeout)
 
 exchange_info=um_futures_client.exchange_info()
 
-logging.info(um_futures_client.klines("BTCUSDT", "1d", startTime=1717113600000))
+logging.info(um_futures_client.klines("BTCUSDT", "1m", startTime=tools.tmi2u(20221231133000), limit=100))
 
 spot_client = Client(base_url="https://api.binance.com", proxies=myproxies, timeout=timeout)
 

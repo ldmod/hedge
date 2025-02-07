@@ -20,6 +20,7 @@ import cryptoqt.data.tools as tools
 import concurrent.futures
 import json
 import pandas as pd
+from binance.error import ClientError
 # Post Maker Order Fail
 SUB_STR = "Post Only order will be rejected"
 CANCEL_STR = "Unknown order sent"
@@ -533,6 +534,20 @@ def clearSymbolPos(client, position_value_map, position_amount_map, logger_error
             logger_error.info(str(e))
     return
             
+def changeMarginType(client, symbol, logging=None):
+    try:
+        marginType = "ISOLATED"
+        marginType = "CROSSED"
+        response = client.change_margin_type(
+            symbol=symbol, marginType=marginType, recvWindow=6000
+        )
+        logging.info(response)
+    except ClientError as error:
+        logging.error(
+            "Found error. status: {}, error code: {}, error message: {}".format(
+                error.status_code, error.error_code, error.error_message
+            )
+        )
             
     
     
@@ -568,19 +583,22 @@ def process_task(position_value_map, position_amount_map, api_key, api_secret, c
 
     # Just one time
     # modify_position_side(client, logger_error)
-    # leverage_brackets=client.leverage_brackets()
-    # lbDict = {}
-    # for lb in leverage_brackets:
-    #     lbDict[lb["symbol"]]=lb
-    # for key, value in position_value_map.items():
-    #     lb=lbDict[key]
-    #     targetItme = None
-    #     moneylimit=200000
-    #     for item in lb["brackets"]:
-    #         if item['notionalCap'] >=moneylimit:
-    #             targetItme=item
-    #             break
-    #     change_leverage(client, key, logger_error, item['initialLeverage'])
+    leverage_brackets=client.leverage_brackets()
+    lbDict = {}
+    for lb in leverage_brackets:
+        lbDict[lb["symbol"]]=lb
+    for key, value in position_value_map.items():
+        lb=lbDict[key]
+        targetItme = None
+        moneylimit=50000
+        for item in lb["brackets"]:
+            if item['notionalCap'] >=moneylimit:
+                targetItme=item
+                break
+        change_leverage(client, key, logger_error, item['initialLeverage'])
+        changeMarginType(client, key, logging=logger_error)
+    raise
+    exit
 
     signal_wait_max = 60 * cfg["signal_wait_max"]  # 60s*10min
 

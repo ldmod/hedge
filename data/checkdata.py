@@ -35,6 +35,25 @@ def checkdata(dr, min1i, sidx):
         return 1
     return 0
 
+def selfcheck(dr, lastedMin1Idx):
+    # dr["min1info_tm"].tolist().index(20241128073900)
+    for min1i in range(lastedMin1Idx):
+        ehFlag = dr["min1info_vwap"][min1i] > dr["min1info_high"][min1i]*1.001
+        llFlag = dr["min1info_vwap"][min1i] < dr["min1info_low"][min1i]*0.999
+        if ehFlag.sum()>0:
+            print(f"ehFlag {dr['min1info_tm'][min1i]}-{np.where(ehFlag)}")
+        if llFlag.sum()>0:
+            print(f"llFlag {dr['min1info_tm'][min1i]}-{np.where(llFlag)}")
+            
+        ehFlag = dr["smin1info_vwap"][min1i] > dr["smin1info_high"][min1i]*1.001
+        llFlag = dr["smin1info_vwap"][min1i] < dr["smin1info_low"][min1i]*0.999
+        if ehFlag.sum()>0:
+            print(f"sehFlag {dr['min1info_tm'][min1i]}-{np.where(ehFlag)}")
+        if llFlag.sum()>0:
+            print(f"sllFlag {dr['min1info_tm'][min1i]}-{np.where(llFlag)}")
+    return
+    
+
 def checkdata2(dr, min1i, sidx):
     tm=dr["min1info_tm"][min1i-1]
     close=dr["smin1info_close"][min1i-1, sidx]
@@ -51,14 +70,15 @@ if __name__ == "__main__":
     did="1"
     if len(sys.argv)>1:
         did=sys.argv[1]
-    os.environ['CUDA_VISIBLE_DEVICES'] = did
+    os.environ['CUDA_VISIBLE_DEVICES'] = did 
     os.environ["HDF5_USE_FILE_LOCKING"]="False"
 
     ud.readuniverse(ud.g_data)
     lasteddownload=dmap.read_memmap(ud.g_data)
     dr=ud.g_data
-    cnt=1000
-    a=np.random.randint(lasteddownload-1440*1, lasteddownload, size=[cnt])
+    # selfcheck(dr, lasteddownload)
+    cnt=2000
+    a=np.random.randint(lasteddownload-1440, lasteddownload, size=[cnt])
     b=np.random.randint(0, dr["sids"].shape[0], size=[cnt])
     loss_cnt=0
     for i in range(a.shape[0]):

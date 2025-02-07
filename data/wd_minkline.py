@@ -92,6 +92,20 @@ def json2df_klinerest(msg):
 
     return dd
 
+def selfcheck(symbol, h5f):
+    # dr["min1info_tm"].tolist().index(20241128073900)
+    for idx in range(h5f["opentm"].shape[0]):
+        tm=h5f["opentm"][idx]
+        vwap=h5f["money"][idx]/h5f["volume"][idx]
+        ehFlag = vwap > h5f["high"][idx]*1.001
+        llFlag = vwap < h5f["low"][idx]*0.999
+        if ehFlag or llFlag:
+            print(f"{symbol} ehFlag {tools.tmu2i(tm)}-{vwap} high:{h5f['high'][idx]} low:{h5f['low'][idx]}", flush=True)
+            datas = fetch_and_add_data(umcs, symbol, tm, tm+60000)
+            
+            
+    return
+
 class WdMinKline():
     def __init__(self, symbols, path, stream_name, columns, proxy, data2df, is_combined = True, openh5fs = True):
         self.symbols=symbols
@@ -109,19 +123,21 @@ class WdMinKline():
                 os.system(f'mkdir -p {self.path}/{symbol}')
                 h5f=swmrh5.H5Swmr(f'{self.path}/{symbol}/{symbol}.h5', self.columns, mode="w")
                 self.h5fs[symbol]=h5f
-                lasted_items=h5f.lasted_items(1000000000)
-                if lasted_items.shape[0]>0:
-                    expectedDataLen = int((lasted_items.iloc[-1]["opentm"]-lasted_items.iloc[0]["opentm"])/60/1000+1)
-                    if expectedDataLen!=lasted_items.shape[0]:
-                        a=0
-                        # os.system(f'rm {self.path}/{symbol}/{symbol}.h5')
-                        # print(f"{symbol}-del", flush=True)
-                        for idx in range(lasted_items.shape[0]-1):
-                            tm1=lasted_items.iloc[idx]["opentm"]
-                            tm2=lasted_items.iloc[idx+1]["opentm"]
-                            if round(tm2-tm1) != 60000:
-                                print(f"{symbol}-{tools.tmu2i(tm1)}-{tools.tmu2i(tm2)}", flush=True)
-                        raise
+                # selfcheck(symbol, h5f.h5f)
+                # lasted_items=h5f.lasted_items(1000000000)
+                # if lasted_items.shape[0]>0:
+                #     expectedDataLen = int((lasted_items.iloc[-1]["opentm"]-lasted_items.iloc[0]["opentm"])/60/1000+1)
+                #     if expectedDataLen!=lasted_items.shape[0]:
+                #         a=0
+                #         # os.system(f'rm {self.path}/{symbol}/{symbol}.h5')
+                #         # print(f"{symbol}-del", flush=True)
+                #         for idx in range(lasted_items.shape[0]-1):
+                #             tm1=lasted_items.iloc[idx]["opentm"]
+                #             tm2=lasted_items.iloc[idx+1]["opentm"]
+                #             if round(tm2-tm1) != 60000:
+                #                 print(f"{symbol}-{tools.tmu2i(tm1)}-{tools.tmu2i(tm2)}", flush=True)
+                #         raise
+                
         # raise
         return
            

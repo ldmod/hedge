@@ -49,13 +49,13 @@ um_client:
     - {http_proxy : 'http://127.0.0.1:8690', https_proxy : 'http://127.0.0.1:8690'}
     - {http_proxy : 'http://127.0.0.1:8790', https_proxy : 'http://127.0.0.1:8790'}
     - {http_proxy : 'http://127.0.0.1:8890', https_proxy : 'http://127.0.0.1:8890'}
-    - {http_proxy : 'http://127.0.0.1:5890', https_proxy : 'http://127.0.0.1:5890'}
-    - {http_proxy : 'http://127.0.0.1:5900', https_proxy : 'http://127.0.0.1:5900'}
-    - {http_proxy : 'http://127.0.0.1:5910', https_proxy : 'http://127.0.0.1:5910'}
-    - {http_proxy : 'http://127.0.0.1:5920', https_proxy : 'http://127.0.0.1:5920'}
-    - {http_proxy : 'http://127.0.0.1:5930', https_proxy : 'http://127.0.0.1:5930'}
-    - {http_proxy : 'http://127.0.0.1:5940', https_proxy : 'http://127.0.0.1:5940'}
-    - {http_proxy : 'http://127.0.0.1:5950', https_proxy : 'http://127.0.0.1:5950'}
-    - {http_proxy : 'http://127.0.0.1:5960', https_proxy : 'http://127.0.0.1:5960'}
-    - {http_proxy : 'http://127.0.0.1:5970', https_proxy : 'http://127.0.0.1:5970'}
-    - {http_proxy : 'http://127.0.0.1:5980', https_proxy : 'http://127.0.0.1:5980'}
+      #- {http_proxy : 'http://127.0.0.1:5890', https_proxy : 'http://127.0.0.1:5890'}
+      #- {http_proxy : 'http://127.0.0.1:5900', https_proxy : 'http://127.0.0.1:5900'}
+      #- {http_proxy : 'http://127.0.0.1:5910', https_proxy : 'http://127.0.0.1:5910'}
+      #- {http_proxy : 'http://127.0.0.1:5920', https_proxy : 'http://127.0.0.1:5920'}
+      #- {http_proxy : 'http://127.0.0.1:5930', https_proxy : 'http://127.0.0.1:5930'}
+      #- {http_proxy : 'http://127.0.0.1:5940', https_proxy : 'http://127.0.0.1:5940'}
+      #- {http_proxy : 'http://127.0.0.1:5950', https_proxy : 'http://127.0.0.1:5950'}
+      #- {http_proxy : 'http://127.0.0.1:5960', https_proxy : 'http://127.0.0.1:5960'}
+      #- {http_proxy : 'http://127.0.0.1:5970', https_proxy : 'http://127.0.0.1:5970'}
+      #- {http_proxy : 'http://127.0.0.1:5980', https_proxy : 'http://127.0.0.1:5980'}
