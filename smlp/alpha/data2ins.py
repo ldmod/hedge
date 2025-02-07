@@ -247,6 +247,8 @@ def getvalid(dr, min1i):
     valid=valid&svalid
     moneyflag=dr["min1info_money"][(di-ipodays)*conts.daymincnt:di*conts.daymincnt].mean(axis=0)>(gv["daily_trade_money"]/1440)
     valid=valid&moneyflag
+    if "symbolTrunc" in gv:
+        valid[gv["symbolTrunc"]:]=False
     
     return  valid
 
